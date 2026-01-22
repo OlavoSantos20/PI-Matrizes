@@ -1,0 +1,187 @@
+﻿@model Projeto_Interdisciplinar.Models.MatrizViewModel
+
+@{
+    ViewData["Title"] = "Multiplicação de Matrizes";
+    Layout = "_LayoutMatrizes";
+}
+
+<style>
+    .matrix-input {
+        min-width: 52px;
+        padding: 4px;
+        box-sizing: border-box;
+    }
+
+    .matrix-table td {
+        padding: 4px;
+        vertical-align: middle;
+        background-color: white;
+    }
+
+    .matrix-wrap {
+        overflow: auto;
+    }
+
+    .result-table {
+        max-width: 800px;
+        background-color: white;
+    }
+</style>
+
+<h3 class="mb-4 text-center">Multiplicação de Matrizes</h3>
+
+@* Mostrar erros de validação *@
+<div class="row justify-content-center">
+    <div class="col-auto">
+        @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+    </div>
+</div>
+
+<form method="post" class="text-center">
+
+    <!-- Dimensões para A e B -->
+    <div class="row justify-content-center mb-3 text-center g-2">
+        <div class="col-auto">
+            <label class="form-label d-block">Linhas A</label>
+            <input type="number" name="LinhasA" class="form-control text-center" min="1" max="30"
+                   value="@(Model.LinhasA > 0 ? Model.LinhasA.ToString() : "")" required />
+        </div>
+
+        <div class="col-auto">
+            <label class="form-label d-block">Colunas A</label>
+            <input type="number" name="ColunasA" class="form-control text-center" min="1" max="30"
+                   value="@(Model.ColunasA > 0 ? Model.ColunasA.ToString() : "")" required />
+        </div>
+        <div class="col-auto d-flex align-items-end">
+            <button type="button" class="btn btn-secondary me-2" onclick="preencherAleatorioA()">
+                Preencher Matriz A Aleatoriamente <i class="bi bi-pencil"></i>
+            </button>
+        </div>
+
+        <div class="col-auto">
+            <label class="form-label d-block">Linhas B</label>
+            <input type="number" name="LinhasB" class="form-control text-center" min="1" max="30"
+                   value="@(Model.LinhasB > 0 ? Model.LinhasB.ToString() : "")" required />
+        </div>
+
+        <div class="col-auto">
+            <label class="form-label d-block">Colunas B</label>
+            <input type="number" name="ColunasB" class="form-control text-center" min="1" max="30"
+                   value="@(Model.ColunasB > 0 ? Model.ColunasB.ToString() : "")" required />
+        </div>
+        <div class="col-auto d-flex align-items-end">           
+            <button type="button" class="btn btn-secondary me-2" onclick="preencherAleatorioB()">
+                Preencher Matriz B Aleatoriamente <i class="bi bi-pencil"></i>
+            </button>
+            <button type="submit" class="btn btn-primary me-2">Criar Matrizes</button>
+        </div>
+    </div>
+
+    @* Mostrar grelhas (sempre que as dimensões estiverem definidas) *@
+    @if (Model.LinhasA > 0 && Model.ColunasA > 0 && Model.LinhasB > 0 && Model.ColunasB > 0)
+    {
+        <div class="row justify-content-center mb-3 text-center">
+            <!-- Matriz A -->
+            <div class="col-auto">
+                <h5>Matriz A (@Model.LinhasA x @Model.ColunasA)</h5>
+                <div class="matrix-wrap">
+                    <table class="table table-bordered text-center mx-auto matrix-table">
+                        <tbody>
+                            @for (int i = 0; i < Model.LinhasA; i++)
+                            {
+                                <tr>
+                                    @for (int j = 0; j < Model.ColunasA; j++)
+                                    {
+                                        <td>
+                                            <input type="text"
+                                                   name="MatrizA[@i,@j]"
+                                                   class="form-control form-control-sm text-center matrix-input"
+                                                   inputmode="numeric"
+                                                   pattern="-?[0-9]*"
+                                                   autocomplete="off"
+                                                   value="@(Model.MatrizA != null ? Model.MatrizA[i,j].ToString() : "")" />
+                                        </td>
+                                    }
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="col-auto d-none d-md-block" style="width:32px;"></div>
+
+            <!-- Matriz B -->
+            <div class="col-auto">
+                <h5>Matriz B (@Model.LinhasB x @Model.ColunasB)</h5>
+                <div class="matrix-wrap">
+                    <table class="table table-bordered text-center mx-auto matrix-table">
+                        <tbody>
+                            @for (int i = 0; i < Model.LinhasB; i++)
+                            {
+                                <tr>
+                                    @for (int j = 0; j < Model.ColunasB; j++)
+                                    {
+                                        <td>
+                                            <input type="text"
+                                                   name="MatrizB[@i,@j]"
+                                                   class="form-control form-control-sm text-center matrix-input"
+                                                   inputmode="numeric"
+                                                   pattern="-?[0-9]*"
+                                                   autocomplete="off"
+                                                   value="@(Model.MatrizB != null ? Model.MatrizB[i,j].ToString() : "")" />
+                                        </td>
+                                    }
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Botão Multiplicar -->
+        <div class="text-center mb-4">
+            <button name="operacao" value="multiplicar" class="btn btn-primary">Multiplicar</button>
+        </div>
+    }
+
+</form>
+
+@* Resultado apenas quando existe *@
+@if (Model.Resultado != null && Model.Operacao != null &&
+   Model.Operacao.Equals("multiplicar", System.StringComparison.OrdinalIgnoreCase))
+{
+    <hr />
+    <h5 class="text-center">Resultado (@Model.Resultado.GetLength(0) x @Model.Resultado.GetLength(1))</h5>
+
+    <div class="d-flex justify-content-center">
+        <table class="table table-bordered text-center mx-auto result-table">
+            <tbody>
+                @for (int i = 0; i < Model.Resultado.GetLength(0); i++)
+                {
+                    <tr>
+                        @for (int j = 0; j < Model.Resultado.GetLength(1); j++)
+                        {
+                            <td>@Model.Resultado[i, j]</td>
+                        }
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+<script>
+    function preencherAleatorioA() {
+        const min = -9, max = 9;
+        const inputs = document.querySelectorAll('input[name^="MatrizA"]');
+        inputs.forEach(i => i.value = Math.floor(Math.random() * (max - min + 1)) + min);
+    }
+
+    function preencherAleatorioB() {
+        const min = -9, max = 9;
+        const inputs = document.querySelectorAll('input[name^="MatrizB"]');
+        inputs.forEach(i => i.value = Math.floor(Math.random() * (max - min + 1)) + min);
+    }
+</script>

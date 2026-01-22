@@ -1,0 +1,69 @@
+C:\Users\costa\Desktop\PI LEI\Projeto Interdisciplinar\Projeto Interdisciplinar\bin\Debug\net8.0\appsettings.Development.json
+C:\Users\costa\Desktop\PI LEI\Projeto Interdisciplinar\Projeto Interdisciplinar\bin\Debug\net8.0\appsettings.json
+C:\Users\costa\Desktop\PI LEI\Projeto Interdisciplinar\Projeto Interdisciplinar\bin\Debug\net8.0\Projeto Interdisciplinar.staticwebassets.runtime.json
+C:\Users\costa\Desktop\PI LEI\Projeto Interdisciplinar\Projeto Interdisciplinar\bin\Debug\net8.0\Projeto Interdisciplinar.staticwebassets.endpoints.json
+C:\Users\costa\Desktop\PI LEI\Projeto Interdisciplinar\Projeto Interdisciplinar\bin\Debug\net8.0\Projeto Interdisciplinar.exe
+C:\Users\costa\Desktop\PI LEI\Projeto Interdisciplinar\Projeto Interdisciplinar\bin\Debug\net8.0\Projeto Interdisciplinar.deps.json
+C:\Users\costa\Desktop\PI LEI\Projeto Interdisciplinar\Projeto Interdisciplinar\bin\Debug\net8.0\Projeto Interdisciplinar.runtimeconfig.json
+C:\Users\costa\Desktop\PI LEI\Projeto Interdisciplinar\Projeto Interdisciplinar\bin\Debug\net8.0\Projeto Interdisciplinar.dll
+C:\Users\costa\Desktop\PI LEI\Projeto Interdisciplinar\Projeto Interdisciplinar\bin\Debug\net8.0\Projeto Interdisciplinar.pdb
+C:\Users\costa\Desktop\PI LEI\Projeto Interdisciplinar\Projeto Interdisciplinar\obj\Debug\net8.0\Projeto Interdisciplinar.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\costa\Desktop\PI LEI\Projeto Interdisciplinar\Projeto Interdisciplinar\obj\Debug\net8.0\Projeto Interdisciplinar.AssemblyInfoInputs.cache
+C:\Users\costa\Desktop\PI LEI\Projeto Interdisciplinar\Projeto Interdisciplinar\obj\Debug\net8.0\Projeto Interdisciplinar.AssemblyInfo.cs
+C:\Users\costa\Desktop\PI LEI\Projeto Interdisciplinar\Projeto Interdisciplinar\obj\Debug\net8.0\Projeto Interdisciplinar.csproj.CoreCompileInputs.cache
+C:\Users\costa\Desktop\PI LEI\Projeto Interdisciplinar\Projeto Interdisciplinar\obj\Debug\net8.0\Projeto Interdisciplinar.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\costa\Desktop\PI LEI\Projeto Interdisciplinar\Projeto Interdisciplinar\obj\Debug\net8.0\Projeto Interdisciplinar.RazorAssemblyInfo.cache
+C:\Users\costa\Desktop\PI LEI\Projeto Interdisciplinar\Projeto Interdisciplinar\obj\Debug\net8.0\Projeto Interdisciplinar.RazorAssemblyInfo.cs
+C:\Users\costa\Desktop\PI LEI\Projeto Interdisciplinar\Projeto Interdisciplinar\obj\Debug\net8.0\Projeto Interdisciplinar.sourcelink.json
+C:\Users\costa\Desktop\PI LEI\Projeto Interdisciplinar\Projeto Interdisciplinar\obj\Debug\net8.0\scopedcss\Views\Shared\_Layout.cshtml.rz.scp.css
+C:\Users\costa\Desktop\PI LEI\Projeto Interdisciplinar\Projeto Interdisciplinar\obj\Debug\net8.0\scopedcss\bundle\Projeto Interdisciplinar.styles.css
+C:\Users\costa\Desktop\PI LEI\Projeto Interdisciplinar\Projeto Interdisciplinar\obj\Debug\net8.0\scopedcss\projectbundle\Projeto Interdisciplinar.bundle.scp.css
+C:\Users\costa\Desktop\PI LEI\Projeto Interdisciplinar\Projeto Interdisciplinar\obj\Debug\net8.0\staticwebassets.build.json
+C:\Users\costa\Desktop\PI LEI\Projeto Interdisciplinar\Projeto Interdisciplinar\obj\Debug\net8.0\staticwebassets.development.json
+C:\Users\costa\Desktop\PI LEI\Projeto Interdisciplinar\Projeto Interdisciplinar\obj\Debug\net8.0\staticwebassets.build.endpoints.json
+C:\Users\costa\Desktop\PI LEI\Projeto Interdisciplinar\Projeto Interdisciplinar\obj\Debug\net8.0\staticwebassets\msbuild.Projeto Interdisciplinar.Microsoft.AspNetCore.StaticWebAssets.props
+C:\Users\costa\Desktop\PI LEI\Projeto Interdisciplinar\Projeto Interdisciplinar\obj\Debug\net8.0\staticwebassets\msbuild.Projeto Interdisciplinar.Microsoft.AspNetCore.StaticWebAssetEndpoints.props
+C:\Users\costa\Desktop\PI LEI\Projeto Interdisciplinar\Projeto Interdisciplinar\obj\Debug\net8.0\staticwebassets\msbuild.build.Projeto Interdisciplinar.props
+C:\Users\costa\Desktop\PI LEI\Projeto Interdisciplinar\Projeto Interdisciplinar\obj\Debug\net8.0\staticwebassets\msbuild.buildMultiTargeting.Projeto Interdisciplinar.props
+C:\Users\costa\Desktop\PI LEI\Projeto Interdisciplinar\Projeto Interdisciplinar\obj\Debug\net8.0\staticwebassets\msbuild.buildTransitive.Projeto Interdisciplinar.props
+C:\Users\costa\Desktop\PI LEI\Projeto Interdisciplinar\Projeto Interdisciplinar\obj\Debug\net8.0\staticwebassets.pack.json
+C:\Users\costa\Desktop\PI LEI\Projeto Interdisciplinar\Projeto Interdisciplinar\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
+C:\Users\costa\Desktop\PI LEI\Projeto Interdisciplinar\Projeto Interdisciplinar\obj\Debug\net8.0\Projeto Interdisciplinar.dll
+C:\Users\costa\Desktop\PI LEI\Projeto Interdisciplinar\Projeto Interdisciplinar\obj\Debug\net8.0\refint\Projeto Interdisciplinar.dll
+C:\Users\costa\Desktop\PI LEI\Projeto Interdisciplinar\Projeto Interdisciplinar\obj\Debug\net8.0\Projeto Interdisciplinar.pdb
+C:\Users\costa\Desktop\PI LEI\Projeto Interdisciplinar\Projeto Interdisciplinar\obj\Debug\net8.0\Projeto Interdisciplinar.genruntimeconfig.cache
+C:\Users\costa\Desktop\PI LEI\Projeto Interdisciplinar\Projeto Interdisciplinar\obj\Debug\net8.0\ref\Projeto Interdisciplinar.dll
+C:\Users\ptola\Desktop\MATRIZES\Projeto Interdisciplinar\Projeto Interdisciplinar\bin\Debug\net8.0\appsettings.Development.json
+C:\Users\ptola\Desktop\MATRIZES\Projeto Interdisciplinar\Projeto Interdisciplinar\bin\Debug\net8.0\appsettings.json
+C:\Users\ptola\Desktop\MATRIZES\Projeto Interdisciplinar\Projeto Interdisciplinar\bin\Debug\net8.0\Projeto Interdisciplinar.staticwebassets.runtime.json
+C:\Users\ptola\Desktop\MATRIZES\Projeto Interdisciplinar\Projeto Interdisciplinar\bin\Debug\net8.0\Projeto Interdisciplinar.staticwebassets.endpoints.json
+C:\Users\ptola\Desktop\MATRIZES\Projeto Interdisciplinar\Projeto Interdisciplinar\bin\Debug\net8.0\Projeto Interdisciplinar.exe
+C:\Users\ptola\Desktop\MATRIZES\Projeto Interdisciplinar\Projeto Interdisciplinar\bin\Debug\net8.0\Projeto Interdisciplinar.deps.json
+C:\Users\ptola\Desktop\MATRIZES\Projeto Interdisciplinar\Projeto Interdisciplinar\bin\Debug\net8.0\Projeto Interdisciplinar.runtimeconfig.json
+C:\Users\ptola\Desktop\MATRIZES\Projeto Interdisciplinar\Projeto Interdisciplinar\bin\Debug\net8.0\Projeto Interdisciplinar.dll
+C:\Users\ptola\Desktop\MATRIZES\Projeto Interdisciplinar\Projeto Interdisciplinar\bin\Debug\net8.0\Projeto Interdisciplinar.pdb
+C:\Users\ptola\Desktop\MATRIZES\Projeto Interdisciplinar\Projeto Interdisciplinar\obj\Debug\net8.0\rpswa.dswa.cache.json
+C:\Users\ptola\Desktop\MATRIZES\Projeto Interdisciplinar\Projeto Interdisciplinar\obj\Debug\net8.0\Projeto Interdisciplinar.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\ptola\Desktop\MATRIZES\Projeto Interdisciplinar\Projeto Interdisciplinar\obj\Debug\net8.0\Projeto Interdisciplinar.AssemblyInfoInputs.cache
+C:\Users\ptola\Desktop\MATRIZES\Projeto Interdisciplinar\Projeto Interdisciplinar\obj\Debug\net8.0\Projeto Interdisciplinar.AssemblyInfo.cs
+C:\Users\ptola\Desktop\MATRIZES\Projeto Interdisciplinar\Projeto Interdisciplinar\obj\Debug\net8.0\Projeto Interdisciplinar.csproj.CoreCompileInputs.cache
+C:\Users\ptola\Desktop\MATRIZES\Projeto Interdisciplinar\Projeto Interdisciplinar\obj\Debug\net8.0\Projeto Interdisciplinar.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\ptola\Desktop\MATRIZES\Projeto Interdisciplinar\Projeto Interdisciplinar\obj\Debug\net8.0\Projeto Interdisciplinar.RazorAssemblyInfo.cache
+C:\Users\ptola\Desktop\MATRIZES\Projeto Interdisciplinar\Projeto Interdisciplinar\obj\Debug\net8.0\Projeto Interdisciplinar.RazorAssemblyInfo.cs
+C:\Users\ptola\Desktop\MATRIZES\Projeto Interdisciplinar\Projeto Interdisciplinar\obj\Debug\net8.0\Projeto Interdisciplinar.sourcelink.json
+C:\Users\ptola\Desktop\MATRIZES\Projeto Interdisciplinar\Projeto Interdisciplinar\obj\Debug\net8.0\rjimswa.dswa.cache.json
+C:\Users\ptola\Desktop\MATRIZES\Projeto Interdisciplinar\Projeto Interdisciplinar\obj\Debug\net8.0\rjsmrazor.dswa.cache.json
+C:\Users\ptola\Desktop\MATRIZES\Projeto Interdisciplinar\Projeto Interdisciplinar\obj\Debug\net8.0\rjsmcshtml.dswa.cache.json
+C:\Users\ptola\Desktop\MATRIZES\Projeto Interdisciplinar\Projeto Interdisciplinar\obj\Debug\net8.0\scopedcss\Views\Shared\_Layout.cshtml.rz.scp.css
+C:\Users\ptola\Desktop\MATRIZES\Projeto Interdisciplinar\Projeto Interdisciplinar\obj\Debug\net8.0\scopedcss\bundle\Projeto Interdisciplinar.styles.css
+C:\Users\ptola\Desktop\MATRIZES\Projeto Interdisciplinar\Projeto Interdisciplinar\obj\Debug\net8.0\scopedcss\projectbundle\Projeto Interdisciplinar.bundle.scp.css
+C:\Users\ptola\Desktop\MATRIZES\Projeto Interdisciplinar\Projeto Interdisciplinar\obj\Debug\net8.0\staticwebassets.build.json
+C:\Users\ptola\Desktop\MATRIZES\Projeto Interdisciplinar\Projeto Interdisciplinar\obj\Debug\net8.0\staticwebassets.build.json.cache
+C:\Users\ptola\Desktop\MATRIZES\Projeto Interdisciplinar\Projeto Interdisciplinar\obj\Debug\net8.0\staticwebassets.development.json
+C:\Users\ptola\Desktop\MATRIZES\Projeto Interdisciplinar\Projeto Interdisciplinar\obj\Debug\net8.0\staticwebassets.build.endpoints.json
+C:\Users\ptola\Desktop\MATRIZES\Projeto Interdisciplinar\Projeto Interdisciplinar\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
+C:\Users\ptola\Desktop\MATRIZES\Projeto Interdisciplinar\Projeto Interdisciplinar\obj\Debug\net8.0\Projeto Interdisciplinar.dll
+C:\Users\ptola\Desktop\MATRIZES\Projeto Interdisciplinar\Projeto Interdisciplinar\obj\Debug\net8.0\refint\Projeto Interdisciplinar.dll
+C:\Users\ptola\Desktop\MATRIZES\Projeto Interdisciplinar\Projeto Interdisciplinar\obj\Debug\net8.0\Projeto Interdisciplinar.pdb
+C:\Users\ptola\Desktop\MATRIZES\Projeto Interdisciplinar\Projeto Interdisciplinar\obj\Debug\net8.0\Projeto Interdisciplinar.genruntimeconfig.cache
+C:\Users\ptola\Desktop\MATRIZES\Projeto Interdisciplinar\Projeto Interdisciplinar\obj\Debug\net8.0\ref\Projeto Interdisciplinar.dll

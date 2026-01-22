@@ -1,0 +1,126 @@
+﻿@model MatrizViewModel
+
+@{
+    ViewData["Title"] = "Determinante";
+    Layout = "_LayoutMatrizes";
+}
+
+<style>
+    .matrix-input {
+        min-width: 52px;
+        padding: 4px;
+        box-sizing: border-box;
+    }
+
+    .matrix-table td {
+        padding: 4px;
+        vertical-align: middle;
+        background-color: white;
+    }
+
+    .matrix-wrap {
+        overflow: auto;
+    }
+
+    .result-table {
+        max-width: 600px;
+        background-color: white;
+    }
+</style>
+
+<h3 class="mb-4 text-center">Determinante</h3>
+
+<form method="post" class="text-center">
+
+    <!-- Dimensões (centradas) -->
+    <div class="row justify-content-center mb-4 text-center">
+        <div class="col-auto">
+            <label class="form-label d-block">Linhas / Colunas</label>
+            <input type="number"
+                   name="Linhas"
+                   class="form-control text-center"
+                   min="1" max="30"
+                   value="@(Model.Linhas > 0 ? Model.Linhas : "")"
+                   required />
+        </div>
+
+        <div class="col-auto d-flex align-items-end">
+            <button type="submit" class="btn btn-primary" style="margin-right:5px;">
+                Criar Matriz
+            </button>
+
+            <button type="button"
+                    class="btn btn-secondary"
+                    onclick="preencherAleatorio()">
+                Preencher Aleatoriamente <i class="bi bi-pencil"></i>
+            </button>
+        </div>
+    </div>
+
+    @if (Model.Linhas > 0 && Model.Colunas > 0)
+    {
+        <div class="row justify-content-center mb-3 text-center">
+            <div class="col-auto">
+                <h5>Matriz A</h5>
+                <div class="matrix-wrap">
+                    <table class="table table-bordered text-center mx-auto matrix-table">
+                        <tbody>
+                            @for (int i = 0; i < Model.Linhas; i++)
+                            {
+                                <tr>
+                                    @for (int j = 0; j < Model.Colunas; j++)
+                                    {
+                                        <td>
+                                            <input type="text"
+                                                   name="MatrizA[@i,@j]"
+                                                   class="form-control form-control-sm text-center matrix-input"
+                                                   inputmode="numeric"
+                                                   pattern="-?[0-9]*"
+                                                   autocomplete="off"
+                                                   value="@(Model.MatrizA != null ? Model.MatrizA[i,j].ToString() : "")" />
+                                        </td>
+                                    }
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Botão Calcular -->
+        <div class="text-center mb-4">
+            <button name="operacao" value="determinante" class="btn btn-primary">
+                Calcular Determinante
+            </button>
+        </div>
+    }
+
+</form>
+
+@if (Model.Determinante != null && Model.Operacao != null &&
+   Model.Operacao.Equals("determinante", System.StringComparison.OrdinalIgnoreCase))
+{
+    <hr />
+
+    <h5 class="text-center">Determinante</h5>
+
+    <div class="d-flex justify-content-center">
+        <div class="alert alert-light result-table" role="alert">
+            <strong>@Model.Determinante.Value.ToString("G6")</strong>
+        </div>
+    </div>
+}
+
+<script>
+    function preencherAleatorio() {
+        const min = -9;
+        const max = 9;
+        const inputs = document.querySelectorAll('input[name^="MatrizA"]');
+
+        inputs.forEach(input => {
+            const valor = Math.floor(Math.random() * (max - min + 1)) + min;
+            input.value = valor;
+        });
+    }
+</script>

@@ -1,0 +1,73 @@
+﻿@{
+    Layout = "_Layout";
+    var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
+}
+<style>
+
+    .card-body{
+        background-color: #f8f9fa;
+    }
+    .matriz-navbar .nav-link {
+        color: black;
+        border: none;
+        border-radius: 0;
+        font-weight: 500;
+    }
+
+        .matriz-navbar .nav-link:hover {
+            color: #0d6efd;
+        }
+
+        .matriz-navbar .nav-link.active {
+            color: #0d6efd;
+            background-color: #f8f9fa;
+        }
+</style>
+<div>
+    <div>
+        <ul class="nav nav-tabs nav-fill matriz-navbar">
+            <li class="nav-item">
+                <a class="nav-link @(currentAction == "SomaSubtracao" ? "active" : "")"
+                   asp-controller="Matrizes"
+                   asp-action="SomaSubtracao">
+                    Soma / Subtração
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link @(currentAction == "MultiplicacaoEscalar" ? "active" : "")"
+                   asp-controller="Matrizes"
+                   asp-action="MultiplicacaoEscalar">
+                    Multiplicação Escalar
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link @(currentAction == "MultiplicacaoMatriz" ? "active" : "")"
+                   asp-controller="Matrizes"
+                   asp-action="MultiplicacaoMatriz">
+                    Multiplicação de Matrizes
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link @(currentAction == "Determinante" ? "active" : "")"
+                   asp-controller="Matrizes"
+                   asp-action="Determinante">
+                    Determinante
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link @(currentAction == "Inversa" ? "active" : "")"
+                   asp-controller="Matrizes"
+                   asp-action="Inversa">
+                    Matriz Inversa
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="card-body">
+        @RenderBody()
+    </div>
+</div>
+
+@RenderSection("Scripts", required: false)
+

@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\ptola\\Desktop\\MATRIZES\\Projeto Interdisciplinar\\Projeto Interdisciplinar\\Projeto Interdisciplinar.csproj": {}
+    "C:\\Users\\ptola\\Documents\\projetos\\PI-Matrizes\\Projeto Interdisciplinar\\Projeto Interdisciplinar\\Projeto Interdisciplinar.csproj": {}
   },
   "projects": {
-    "C:\\Users\\ptola\\Desktop\\MATRIZES\\Projeto Interdisciplinar\\Projeto Interdisciplinar\\Projeto Interdisciplinar.csproj": {
+    "C:\\Users\\ptola\\Documents\\projetos\\PI-Matrizes\\Projeto Interdisciplinar\\Projeto Interdisciplinar\\Projeto Interdisciplinar.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\ptola\\Desktop\\MATRIZES\\Projeto Interdisciplinar\\Projeto Interdisciplinar\\Projeto Interdisciplinar.csproj",
+        "projectUniqueName": "C:\\Users\\ptola\\Documents\\projetos\\PI-Matrizes\\Projeto Interdisciplinar\\Projeto Interdisciplinar\\Projeto Interdisciplinar.csproj",
         "projectName": "Projeto Interdisciplinar",
-        "projectPath": "C:\\Users\\ptola\\Desktop\\MATRIZES\\Projeto Interdisciplinar\\Projeto Interdisciplinar\\Projeto Interdisciplinar.csproj",
+        "projectPath": "C:\\Users\\ptola\\Documents\\projetos\\PI-Matrizes\\Projeto Interdisciplinar\\Projeto Interdisciplinar\\Projeto Interdisciplinar.csproj",
         "packagesPath": "C:\\Users\\ptola\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\ptola\\Desktop\\MATRIZES\\Projeto Interdisciplinar\\Projeto Interdisciplinar\\obj\\",
+        "outputPath": "C:\\Users\\ptola\\Documents\\projetos\\PI-Matrizes\\Projeto Interdisciplinar\\Projeto Interdisciplinar\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

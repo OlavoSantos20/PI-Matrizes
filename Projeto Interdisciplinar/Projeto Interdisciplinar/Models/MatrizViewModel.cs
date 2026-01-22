@@ -19,6 +19,7 @@
 
         public string? Operacao { get; set; }
 
+        // numero que multiplica para a matriz inteira
         public int Escalar { get; set; }
 
         public double? Determinante { get; set; }

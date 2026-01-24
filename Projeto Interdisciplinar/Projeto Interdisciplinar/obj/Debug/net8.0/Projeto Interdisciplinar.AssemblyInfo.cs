@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Projeto Interdisciplinar")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+5294afcc11b0f590e394ca636e89b6f08d5379fa")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+53f3deb36f813fb5fa1be780aee13b2b1a924178")]
 [assembly: System.Reflection.AssemblyProductAttribute("Projeto Interdisciplinar")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Projeto Interdisciplinar")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

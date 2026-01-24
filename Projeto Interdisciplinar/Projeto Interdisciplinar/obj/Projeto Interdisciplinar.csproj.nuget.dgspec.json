@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\ptola\\Documents\\projetos\\PI-Matrizes\\Projeto Interdisciplinar\\Projeto Interdisciplinar\\Projeto Interdisciplinar.csproj": {}
+    "C:\\Users\\costa\\Desktop\\PI GIT\\PI-Matrizes\\Projeto Interdisciplinar\\Projeto Interdisciplinar\\Projeto Interdisciplinar.csproj": {}
   },
   "projects": {
-    "C:\\Users\\ptola\\Documents\\projetos\\PI-Matrizes\\Projeto Interdisciplinar\\Projeto Interdisciplinar\\Projeto Interdisciplinar.csproj": {
+    "C:\\Users\\costa\\Desktop\\PI GIT\\PI-Matrizes\\Projeto Interdisciplinar\\Projeto Interdisciplinar\\Projeto Interdisciplinar.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\ptola\\Documents\\projetos\\PI-Matrizes\\Projeto Interdisciplinar\\Projeto Interdisciplinar\\Projeto Interdisciplinar.csproj",
+        "projectUniqueName": "C:\\Users\\costa\\Desktop\\PI GIT\\PI-Matrizes\\Projeto Interdisciplinar\\Projeto Interdisciplinar\\Projeto Interdisciplinar.csproj",
         "projectName": "Projeto Interdisciplinar",
-        "projectPath": "C:\\Users\\ptola\\Documents\\projetos\\PI-Matrizes\\Projeto Interdisciplinar\\Projeto Interdisciplinar\\Projeto Interdisciplinar.csproj",
-        "packagesPath": "C:\\Users\\ptola\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\ptola\\Documents\\projetos\\PI-Matrizes\\Projeto Interdisciplinar\\Projeto Interdisciplinar\\obj\\",
+        "projectPath": "C:\\Users\\costa\\Desktop\\PI GIT\\PI-Matrizes\\Projeto Interdisciplinar\\Projeto Interdisciplinar\\Projeto Interdisciplinar.csproj",
+        "packagesPath": "C:\\Users\\costa\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\costa\\Desktop\\PI GIT\\PI-Matrizes\\Projeto Interdisciplinar\\Projeto Interdisciplinar\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\ptola\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\costa\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -44,7 +44,7 @@
           "auditLevel": "low",
           "auditMode": "direct"
         },
-        "SdkAnalysisLevel": "9.0.300"
+        "SdkAnalysisLevel": "9.0.200"
       },
       "frameworks": {
         "net8.0": {
@@ -68,7 +68,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.306/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.200/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

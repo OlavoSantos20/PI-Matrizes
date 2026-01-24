@@ -1,7 +1,7 @@
 ﻿@model MatrizViewModel
 
 @{
-    ViewData["Title"] = "Multiplicação Escalar";
+    ViewData["Title"] = "Matriz Transposta";
     Layout = "_LayoutMatrizes";
 }
 
@@ -27,12 +27,6 @@
         background-color: white;
     }
 
-    /* Pequeno ajuste para o campo do escalar */
-    .escalar-input {
-        width: 140px;
-        margin: 0 auto;
-    }
-
     .file-input-sm {
         height: 40px;
         padding: 0.25rem 0.5rem;
@@ -41,9 +35,8 @@
     }
 </style>
 
-<h3 class="mb-4 text-center">Multiplicação Escalar</h3>
+<h3 class="mb-4 text-center">Matriz Transposta</h3>
 
-@* Mostrar erros de validação *@
 <div class="row justify-content-center">
     <div class="col-auto">
         @Html.ValidationSummary(false, "", new { @class = "text-danger" })
@@ -52,7 +45,7 @@
 
 <form method="post" enctype="multipart/form-data" class="text-center">
 
-    <!-- Dimensões (centradas) -->
+    <!-- Dimensões -->
     <div class="row justify-content-center mb-4 text-center">
         <div class="col-auto">
             <label class="form-label d-block">Linhas</label>
@@ -92,7 +85,6 @@
 
     @if (Model.Linhas > 0 && Model.Colunas > 0)
     {
-        <!-- Matriz A -->
         <div class="row justify-content-center mb-3 text-center">
             <div class="col-auto">
                 <h5>Matriz A</h5>
@@ -100,7 +92,7 @@
                     Exportar (JSON)
                 </button>
                 <div class="matrix-wrap">
-                    <table class="table table-bordered text-center mx-auto matrix-table">
+                    <table class="table table-bordered mx-auto matrix-table">
                         <tbody>
                             @for (int i = 0; i < Model.Linhas; i++)
                             {
@@ -111,10 +103,7 @@
                                             <input type="text"
                                                    name="MatrizA[@i,@j]"
                                                    class="form-control form-control-sm text-center matrix-input"
-                                                   inputmode="numeric"
-                                                   pattern="-?[0-9]*"
-                                                   autocomplete="off"
-                                                   value="@(Model.MatrizA != null ? Model.MatrizA[i,j].ToString() : "")" />
+                                                   value="@(Model.MatrizA != null ? Model.MatrizA[i,j] : "")" />
                                         </td>
                                     }
                                 </tr>
@@ -125,43 +114,28 @@
             </div>
         </div>
 
-        <!-- Campo do escalar -->
-        <div class="row justify-content-center mb-4">
-            <div class="col-auto text-center">
-                <label class="form-label d-block">Escalar</label>
-                <input type="text"
-                       name="Escalar"
-                       class="form-control text-center escalar-input"
-                       inputmode="numeric"
-                       pattern="-?[0-9]*"
-                       value="@(Model.Escalar != 0 ? Model.Escalar.ToString() : "")"/>
-            </div>
-        </div>
-
-        <!-- Botão Multiplicar -->
         <div class="text-center mb-4">
-            <button name="operacao" value="multiplicar" class="btn btn-primary">
-                Multiplicar
+            <button name="operacao" value="transposta" class="btn btn-primary">
+                Calcular Transposta
             </button>
         </div>
     }
 
 </form>
 
-@if (Model.Resultado != null && Model.Operacao != null &&
-    Model.Operacao.Equals("multiplicar", System.StringComparison.OrdinalIgnoreCase))
+@if (Model.Resultado != null && Model.Operacao == "transposta")
 {
     <hr />
 
-    <h5 class="text-center">Resultado (Multiplicação Escalar)</h5>
+    <h5 class="text-center">Matriz Transposta</h5>
 
     <div class="d-flex justify-content-center">
-        <table class="table table-bordered text-center mx-auto w-auto result-table">
+        <table class="table table-bordered text-center mx-auto result-table">
             <tbody>
-                @for (int i = 0; i < Model.Linhas; i++)
+                @for (int i = 0; i < Model.Resultado.GetLength(0); i++)
                 {
                     <tr>
-                        @for (int j = 0; j < Model.Colunas; j++)
+                        @for (int j = 0; j < Model.Resultado.GetLength(1); j++)
                         {
                             <td>@Model.Resultado[i, j]</td>
                         }
@@ -174,15 +148,10 @@
 
 <script>
     function preencherAleatorio() {
-        // intervalo dos valores aleatórios (ajusta conforme necessário)
         const min = -9;
         const max = 9;
-
-        const inputs = document.querySelectorAll('input[name^="MatrizA"]');
-
-        inputs.forEach(input => {
-            const valor = Math.floor(Math.random() * (max - min + 1)) + min;
-            input.value = valor;
+        document.querySelectorAll('input[name^="MatrizA"]').forEach(i => {
+            i.value = Math.floor(Math.random() * (max - min + 1)) + min;
         });
     }
 </script>

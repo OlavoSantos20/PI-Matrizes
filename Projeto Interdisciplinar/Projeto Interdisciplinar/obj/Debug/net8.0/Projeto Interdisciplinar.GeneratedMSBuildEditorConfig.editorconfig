@@ -9,61 +9,65 @@ build_property.EnforceExtendedAnalyzerRules =
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = Projeto_Interdisciplinar
 build_property.RootNamespace = Projeto_Interdisciplinar
-build_property.ProjectDir = C:\Users\ptola\Documents\projetos\PI-Matrizes\Projeto Interdisciplinar\Projeto Interdisciplinar\
+build_property.ProjectDir = C:\Users\costa\Desktop\PI GIT\PI-Matrizes\Projeto Interdisciplinar\Projeto Interdisciplinar\
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = 
 build_property.RazorLangVersion = 8.0
 build_property.SupportLocalizedComponentNames = 
 build_property.GenerateRazorMetadataSourceChecksumAttributes = 
-build_property.MSBuildProjectDirectory = C:\Users\ptola\Documents\projetos\PI-Matrizes\Projeto Interdisciplinar\Projeto Interdisciplinar
+build_property.MSBuildProjectDirectory = C:\Users\costa\Desktop\PI GIT\PI-Matrizes\Projeto Interdisciplinar\Projeto Interdisciplinar
 build_property._RazorSourceGeneratorDebug = 
 build_property.EffectiveAnalysisLevelStyle = 8.0
 build_property.EnableCodeStyleSeverity = 
 
-[C:/Users/ptola/Documents/projetos/PI-Matrizes/Projeto Interdisciplinar/Projeto Interdisciplinar/Views/Home/Index.cshtml]
+[C:/Users/costa/Desktop/PI GIT/PI-Matrizes/Projeto Interdisciplinar/Projeto Interdisciplinar/Views/Home/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/ptola/Documents/projetos/PI-Matrizes/Projeto Interdisciplinar/Projeto Interdisciplinar/Views/Matrizes/Determinante.cshtml]
+[C:/Users/costa/Desktop/PI GIT/PI-Matrizes/Projeto Interdisciplinar/Projeto Interdisciplinar/Views/Matrizes/Determinante.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWF0cml6ZXNcRGV0ZXJtaW5hbnRlLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/ptola/Documents/projetos/PI-Matrizes/Projeto Interdisciplinar/Projeto Interdisciplinar/Views/Matrizes/Inversa.cshtml]
+[C:/Users/costa/Desktop/PI GIT/PI-Matrizes/Projeto Interdisciplinar/Projeto Interdisciplinar/Views/Matrizes/Inversa.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWF0cml6ZXNcSW52ZXJzYS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/ptola/Documents/projetos/PI-Matrizes/Projeto Interdisciplinar/Projeto Interdisciplinar/Views/Matrizes/MultiplicacaoEscalar.cshtml]
+[C:/Users/costa/Desktop/PI GIT/PI-Matrizes/Projeto Interdisciplinar/Projeto Interdisciplinar/Views/Matrizes/MultiplicacaoEscalar.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWF0cml6ZXNcTXVsdGlwbGljYWNhb0VzY2FsYXIuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/ptola/Documents/projetos/PI-Matrizes/Projeto Interdisciplinar/Projeto Interdisciplinar/Views/Matrizes/MultiplicacaoMatriz.cshtml]
+[C:/Users/costa/Desktop/PI GIT/PI-Matrizes/Projeto Interdisciplinar/Projeto Interdisciplinar/Views/Matrizes/MultiplicacaoMatriz.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWF0cml6ZXNcTXVsdGlwbGljYWNhb01hdHJpei5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/ptola/Documents/projetos/PI-Matrizes/Projeto Interdisciplinar/Projeto Interdisciplinar/Views/Matrizes/SomaSubtracao.cshtml]
+[C:/Users/costa/Desktop/PI GIT/PI-Matrizes/Projeto Interdisciplinar/Projeto Interdisciplinar/Views/Matrizes/SomaSubtracao.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWF0cml6ZXNcU29tYVN1YnRyYWNhby5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/ptola/Documents/projetos/PI-Matrizes/Projeto Interdisciplinar/Projeto Interdisciplinar/Views/Matrizes/_LayoutMatrizes.cshtml]
+[C:/Users/costa/Desktop/PI GIT/PI-Matrizes/Projeto Interdisciplinar/Projeto Interdisciplinar/Views/Matrizes/Transposta.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWF0cml6ZXNcVHJhbnNwb3N0YS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/costa/Desktop/PI GIT/PI-Matrizes/Projeto Interdisciplinar/Projeto Interdisciplinar/Views/Matrizes/_LayoutMatrizes.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWF0cml6ZXNcX0xheW91dE1hdHJpemVzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/ptola/Documents/projetos/PI-Matrizes/Projeto Interdisciplinar/Projeto Interdisciplinar/Views/Shared/Error.cshtml]
+[C:/Users/costa/Desktop/PI GIT/PI-Matrizes/Projeto Interdisciplinar/Projeto Interdisciplinar/Views/Shared/Error.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXEVycm9yLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/ptola/Documents/projetos/PI-Matrizes/Projeto Interdisciplinar/Projeto Interdisciplinar/Views/Shared/_ValidationScriptsPartial.cshtml]
+[C:/Users/costa/Desktop/PI GIT/PI-Matrizes/Projeto Interdisciplinar/Projeto Interdisciplinar/Views/Shared/_ValidationScriptsPartial.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/ptola/Documents/projetos/PI-Matrizes/Projeto Interdisciplinar/Projeto Interdisciplinar/Views/_ViewImports.cshtml]
+[C:/Users/costa/Desktop/PI GIT/PI-Matrizes/Projeto Interdisciplinar/Projeto Interdisciplinar/Views/_ViewImports.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdJbXBvcnRzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/ptola/Documents/projetos/PI-Matrizes/Projeto Interdisciplinar/Projeto Interdisciplinar/Views/_ViewStart.cshtml]
+[C:/Users/costa/Desktop/PI GIT/PI-Matrizes/Projeto Interdisciplinar/Projeto Interdisciplinar/Views/_ViewStart.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdTdGFydC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/ptola/Documents/projetos/PI-Matrizes/Projeto Interdisciplinar/Projeto Interdisciplinar/Views/Shared/_Layout.cshtml]
+[C:/Users/costa/Desktop/PI GIT/PI-Matrizes/Projeto Interdisciplinar/Projeto Interdisciplinar/Views/Shared/_Layout.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9MYXlvdXQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = b-760cw6jc2n

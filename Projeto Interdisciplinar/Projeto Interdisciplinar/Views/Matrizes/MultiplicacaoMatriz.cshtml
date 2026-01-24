@@ -26,6 +26,13 @@
         max-width: 800px;
         background-color: white;
     }
+
+    .file-input-sm {
+        height: 40px;
+        padding: 0.25rem 0.5rem;
+        font-size: 0.875rem;
+        line-height: 2.2;
+    }
 </style>
 
 <h3 class="mb-4 text-center">Multiplicação de Matrizes</h3>
@@ -37,20 +44,20 @@
     </div>
 </div>
 
-<form method="post" class="text-center">
+<form method="post" enctype="multipart/form-data" class="text-center">
 
     <!-- Dimensões para A e B -->
     <div class="row justify-content-center mb-3 text-center g-2">
         <div class="col-auto">
             <label class="form-label d-block">Linhas A</label>
             <input type="number" name="LinhasA" class="form-control text-center" min="1" max="30"
-                   value="@(Model.LinhasA > 0 ? Model.LinhasA.ToString() : "")" required />
+                   value="@(Model.LinhasA > 0 ? Model.LinhasA.ToString() : "")" />
         </div>
 
         <div class="col-auto">
             <label class="form-label d-block">Colunas A</label>
             <input type="number" name="ColunasA" class="form-control text-center" min="1" max="30"
-                   value="@(Model.ColunasA > 0 ? Model.ColunasA.ToString() : "")" required />
+                   value="@(Model.ColunasA > 0 ? Model.ColunasA.ToString() : "")" />
         </div>
         <div class="col-auto d-flex align-items-end">
             <button type="button" class="btn btn-secondary me-2" onclick="preencherAleatorioA()">
@@ -61,13 +68,13 @@
         <div class="col-auto">
             <label class="form-label d-block">Linhas B</label>
             <input type="number" name="LinhasB" class="form-control text-center" min="1" max="30"
-                   value="@(Model.LinhasB > 0 ? Model.LinhasB.ToString() : "")" required />
+                   value="@(Model.LinhasB > 0 ? Model.LinhasB.ToString() : "")" />
         </div>
 
         <div class="col-auto">
             <label class="form-label d-block">Colunas B</label>
             <input type="number" name="ColunasB" class="form-control text-center" min="1" max="30"
-                   value="@(Model.ColunasB > 0 ? Model.ColunasB.ToString() : "")" required />
+                   value="@(Model.ColunasB > 0 ? Model.ColunasB.ToString() : "")" />
         </div>
         <div class="col-auto d-flex align-items-end">           
             <button type="button" class="btn btn-secondary me-2" onclick="preencherAleatorioB()">
@@ -75,6 +82,11 @@
             </button>
             <button type="submit" class="btn btn-primary me-2">Criar Matrizes</button>
         </div>
+    </div>
+    <div class="col-auto d-flex justify-content-center mb-4 text-center">
+        <input type="file" name="importFile" accept=".json,application/json" class="form-control form-control-sm file-input-sm d-inline-block me-2" style="width:auto" />
+        <button type="submit" name="import" value="MatrizA" class="btn btn-outline-secondary me-1">Importar Matriz A (JSON)</button>
+        <button type="submit" name="import" value="MatrizB" class="btn btn-outline-secondary">Importar Matriz B (JSON)</button>
     </div>
 
     @* Mostrar grelhas (sempre que as dimensões estiverem definidas) *@
@@ -84,6 +96,9 @@
             <!-- Matriz A -->
             <div class="col-auto">
                 <h5>Matriz A (@Model.LinhasA x @Model.ColunasA)</h5>
+                <button type="submit" name="export" value="MatrizA" class="btn btn-outline-secondary btn-sm ms-2">
+                    Exportar A (JSON)
+                </button>
                 <div class="matrix-wrap">
                     <table class="table table-bordered text-center mx-auto matrix-table">
                         <tbody>
@@ -114,6 +129,9 @@
             <!-- Matriz B -->
             <div class="col-auto">
                 <h5>Matriz B (@Model.LinhasB x @Model.ColunasB)</h5>
+                <button type="submit" name="export" value="MatrizB" class="btn btn-outline-secondary btn-sm ms-2">
+                    Exportar B (JSON)
+                </button>
                 <div class="matrix-wrap">
                     <table class="table table-bordered text-center mx-auto matrix-table">
                         <tbody>

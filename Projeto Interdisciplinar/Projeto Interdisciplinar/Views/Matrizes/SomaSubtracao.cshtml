@@ -26,11 +26,25 @@
         max-width: 600px;
         background-color: white;
     }
+
+    .file-input-sm {
+        height: 40px; 
+        padding: 0.25rem 0.5rem; 
+        font-size: 0.875rem;
+        line-height: 2.2;
+    }
 </style>
 
 <h3 class="mb-4 text-center">Soma e Subtração de Matrizes</h3>
 
-<form method="post" class="text-center">
+@* Mostrar erros de validação *@
+<div class="row justify-content-center">
+    <div class="col-auto">
+        @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+    </div>
+</div>
+
+<form method="post" enctype="multipart/form-data" class="text-center">
 
     <!-- Dimensões -->
     <div class="row justify-content-center mb-4 text-center">
@@ -41,7 +55,7 @@
                    class="form-control text-center"
                    min="1" max="30"
                    value="@(Model.Linhas > 0 ? Model.Linhas : "")"
-                   required />
+                   />
         </div>
 
         <div class="col-auto">
@@ -51,7 +65,7 @@
                    class="form-control text-center"
                    min="1" max="30"
                    value="@(Model.Colunas > 0 ? Model.Colunas : "")"
-                   required />
+                   />
         </div>
 
         <div class="col-auto d-flex align-items-end">
@@ -65,6 +79,12 @@
             </button>
         </div>
     </div>
+    <div class="col-auto d-flex justify-content-center mb-4 text-center">
+        <input type="file" name="importFile" accept=".json,.xml,application/json,text/xml,application/xml" class="form-control form-control-sm file-input-sm d-inline-block me-2" style="width:auto" />
+        <button type="submit" name="import" value="MatrizA" class="btn btn-outline-secondary me-1">Importar Matriz A (JSON ou XML)</button>
+        <button type="submit" name="import" value="MatrizB" class="btn btn-outline-secondary">Importar Matriz B (JSON ou XML)</button>
+    </div>
+    
 
     @if (Model.Linhas > 0 && Model.Colunas > 0)
     {
@@ -74,6 +94,10 @@
             <!-- Matriz A -->
             <div class="col-auto">
                 <h5>Matriz A</h5>
+                <button type="submit" name="export" value="MatrizA" class="btn btn-outline-secondary btn-sm ms-2">
+                    Exportar A (JSON)
+                </button>
+                <button type="submit" name="exportXml" value="MatrizA" class="btn btn-outline-secondary btn-sm ms-2">Exportar A (XML)</button>
                 <div class="matrix-wrap">
                     <table class="table table-bordered text-center mx-auto matrix-table">
                         <tbody>
@@ -104,6 +128,10 @@
             <!-- Matriz B -->
             <div class="col-auto">
                 <h5>Matriz B</h5>
+                <button type="submit" name="export" value="MatrizB" class="btn btn-outline-secondary btn-sm ms-2">
+                    Exportar B (JSON)
+                </button>
+                <button type="submit" name="exportXml" value="MatrizB" class="btn btn-outline-secondary btn-sm ms-2">Exportar B (XML)</button>
                 <div class="matrix-wrap">
                     <table class="table table-bordered text-center mx-auto matrix-table">
                         <tbody>

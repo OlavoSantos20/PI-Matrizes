@@ -1,15 +1,22 @@
+using Microsoft.AspNetCore.Http.Features;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// ?? AUMENTAR LIMITES DO FORM
+builder.Services.Configure<FormOptions>(options =>
+{
+    options.ValueCountLimit = 5000;   // suficiente para 30x30 
+    options.ValueLengthLimit = int.MaxValue;
+    options.MultipartBodyLengthLimit = long.MaxValue;
+});
+
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 

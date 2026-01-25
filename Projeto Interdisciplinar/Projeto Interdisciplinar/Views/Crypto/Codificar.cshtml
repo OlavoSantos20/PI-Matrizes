@@ -76,7 +76,18 @@
             </div>
 
             <div class="mb-2">
-                <label class="form-label">Matriz codificadora (2×2)</label>
+                <label class="form-label"><strong>Matriz codificadora (2×2)</strong></label><br>
+                <label class="form-label">Exportar Matriz Inversa para usar na decodificação</label>
+                <div class="mb-3">
+                    <button type="submit" name="exportInvJson" class="btn btn-outline-primary">
+                        Exportar (JSON)
+                    </button>
+
+                    <button type="submit" name="exportInvXml" class="btn btn-outline-secondary">
+                        Exportar (XML)
+                    </button>
+                </div>
+
                 <div class="matriz-wrapper">
                     <div class="matriz-2x2">
                         <input class="form-control" name="A11" value="@Model.A11" />

@@ -12,7 +12,6 @@ namespace YourApp.Controllers
 {
     public class CryptoController : Controller
     {
-        // ===================== TABELA =====================
         private static readonly Dictionary<char, int> CharToNum = new()
         {
             ['A'] = 1,
@@ -50,7 +49,7 @@ namespace YourApp.Controllers
         private static readonly Dictionary<int, char> NumToChar =
             CharToNum.ToDictionary(x => x.Value, x => x.Key);
 
-        // ===================== CODIFICAR =====================
+
         [HttpGet]
         public IActionResult Codificar()
         {
@@ -60,7 +59,7 @@ namespace YourApp.Controllers
         [HttpPost]
         public IActionResult Codificar(EncryptionViewModel model)
         {
-            // reconstruir matriz A e validar
+            // reconstruir matriz A
             int[,] A = BuildMatrixA(model, out string error);
             if (error != null)
             {
@@ -76,10 +75,11 @@ namespace YourApp.Controllers
                 return View(model);
             }
 
-            // preencher matriz 2 x cols
+            // matriz codificada (resultado)
             int total = encoded.Count;
             int cols = total / 2;
             var mat = new int[2, cols];
+
             for (int k = 0; k < cols; k++)
             {
                 mat[0, k] = encoded[2 * k];
@@ -89,26 +89,41 @@ namespace YourApp.Controllers
             model.EncodedMatrix = mat;
             model.EncodedCols = cols;
 
-            // Se o utilizador clicou num botão de export, gerar e devolver ficheiro
-            bool wantXml = Request.Form.ContainsKey("exportXml");
-            bool wantJson = Request.Form.ContainsKey("export");
+            // calcular matriz inversa (decodificadora)
+            int[,] inverse = InvertMatrix2x2(A);
 
-            // Nota: os botões no view têm value="Resultado" — aqui só confirmamos que existe a intenção de export
-            if (wantXml || wantJson)
+            // detectar botões de exportação
+            bool exportResultJson = Request.Form.ContainsKey("export");
+            bool exportResultXml = Request.Form.ContainsKey("exportXml");
+
+            bool exportInvJson = Request.Form.ContainsKey("exportInvJson");
+            bool exportInvXml = Request.Form.ContainsKey("exportInvXml");
+
+            // exportar MATRIZ CODIFICADA
+            if (exportResultJson || exportResultXml)
             {
-                var exportModel = BuildExportModelFromInt(mat, "Resultado");
-                if (wantXml)
-                    return ExportModelAsXml(exportModel, "Resultado.xml");
-                else
-                    return ExportModelAsJson(exportModel, "Resultado.json");
+                var exportModel = BuildExportModelFromInt(mat, "MatrizCodificada");
+
+                return exportResultXml
+                    ? ExportModelAsXml(exportModel, "matriz_codificada.xml")
+                    : ExportModelAsJson(exportModel, "matriz_codificada.json");
             }
 
-            // caso normal: devolver view com resultado apresentado em tabela
+            // exportar MATRIZ INVERSA (DECODIFICADORA)
+            if (exportInvJson || exportInvXml)
+            {
+                var exportInvModel = BuildExportModelFromInt(inverse, "MatrizInversa");
+
+                return exportInvXml
+                    ? ExportModelAsXml(exportInvModel, "matriz_inversa.xml")
+                    : ExportModelAsJson(exportInvModel, "matriz_inversa.json");
+            }
+
             model.Message = "Mensagem codificada com sucesso.";
             return View(model);
         }
 
-        // ===================== DECODIFICAR (USAR MATRIZ INVERSA) =====================
+
         [HttpGet]
         public IActionResult Decodificar()
         {
@@ -117,11 +132,12 @@ namespace YourApp.Controllers
 
         [HttpPost]
         public IActionResult Decodificar(
-    EncryptionViewModel model,
-    IFormFile? matrixFile,
-    string actionType)
+        EncryptionViewModel model,
+        IFormFile? matrixFile,      
+        IFormFile? inverseFile,     
+        string actionType)
         {
-            // ================= IMPORTAR MATRIZ =================
+
             if (actionType == "import")
             {
                 if (matrixFile == null || matrixFile.Length == 0)
@@ -144,10 +160,37 @@ namespace YourApp.Controllers
                 return View(model);
             }
 
-            // ================= DECODIFICAR =================
+
+            if (actionType == "importInverse")
+            {
+                if (inverseFile == null || inverseFile.Length == 0)
+                {
+                    model.Message = "Seleciona um ficheiro JSON ou XML com a matriz inversa.";
+                    return View(model);
+                }
+
+                var invResult = ImportInverseMatrixFromFile(inverseFile);
+                if (invResult.error != null)
+                {
+                    model.Message = invResult.error;
+                    return View(model);
+                }
+
+                // preencher os campos da matriz inversa
+                model.A11 = invResult.matrix[0, 0];
+                model.A12 = invResult.matrix[0, 1];
+                model.A21 = invResult.matrix[1, 0];
+                model.A22 = invResult.matrix[1, 1];
+
+                model.Message = "Matriz inversa importada com sucesso.";
+                return View(model);
+            }
+
+
+            // decodificar
             if (actionType == "decode")
             {
-                // 1️⃣ reconstruir matriz N a partir dos inputs hidden
+                // reconstruir matriz N a partir dos inputs hidden
                 var (N, cols, parseError) = ParseMatrixNFromForm();
                 if (parseError != null)
                 {
@@ -158,7 +201,7 @@ namespace YourApp.Controllers
                 model.EncodedMatrix = N;
                 model.EncodedCols = cols;
 
-                // 2️⃣ validar matriz inversa
+                // validar matriz inversa
                 int[,] Binv = BuildInverseMatrix(model, out string error);
                 if (error != null)
                 {
@@ -166,7 +209,7 @@ namespace YourApp.Controllers
                     return View(model);
                 }
 
-                // 3️⃣ decodificar
+                // decodificar
                 var chars = new List<char>();
 
                 for (int c = 0; c < cols; c++)
@@ -195,9 +238,9 @@ namespace YourApp.Controllers
 
 
 
-        // ===================== HELPERS =====================
+        // HELPERS
 
-        // Constrói a matriz A (utilizada em codificar). Valida det = ±1
+        // Constrói a matriz utilizada para codificar
         private static int[,] BuildMatrixA(EncryptionViewModel model, out string error)
         {
             error = null;
@@ -217,7 +260,7 @@ namespace YourApp.Controllers
             return A;
         }
 
-        // Constrói a matriz que o utilizador fornece para descodificar — ASSUMIMOS que é a inversa (B).
+        // Constrói a matriz que o utilizador fornece para descodificar — ASSUMIMOS que é a inversa.
         private static int[,] BuildInverseMatrix(EncryptionViewModel model, out string error)
         {
             error = null;
@@ -237,8 +280,7 @@ namespace YourApp.Controllers
             return B;
         }
 
-        // --- Parse da matriz N (2 x cols) a partir do Request.Form
-        // Procura chaves do tipo "N[r,c]" e infere cols = max c + 1.
+
         private (int[,] matrix, int cols, string error) ParseMatrixNFromForm()
         {
             var pattern = new Regex(@"^N\[(\d+),(\d+)\]");
@@ -323,8 +365,8 @@ namespace YourApp.Controllers
             return (result, null);
         }
 
-        // ===================== EXPORT HELPERS =====================
-        // Modelo simples para exportação (serializável em JSON e XML)
+
+        // Modelo simples para exportação 
         public class MatrixExportModel
         {
 
@@ -366,7 +408,7 @@ namespace YourApp.Controllers
         {
             var xmlSerializer = new XmlSerializer(typeof(MatrixExportModel));
             using var ms = new System.IO.MemoryStream();
-            // Serializar para UTF-8
+
             using (var writer = new System.IO.StreamWriter(ms, Encoding.UTF8, leaveOpen: true))
             {
                 xmlSerializer.Serialize(writer, model);
@@ -419,6 +461,63 @@ namespace YourApp.Controllers
                 return (null, 0, "Erro ao ler o ficheiro de matriz.");
             }
         }
+
+        private (int[,] matrix, string? error) ImportInverseMatrixFromFile(IFormFile file)
+        {
+            try
+            {
+                using var stream = file.OpenReadStream();
+                MatrixExportModel model;
+
+                if (file.FileName.EndsWith(".json", StringComparison.OrdinalIgnoreCase))
+                {
+                    model = JsonSerializer.Deserialize<MatrixExportModel>(stream);
+                }
+                else if (file.FileName.EndsWith(".xml", StringComparison.OrdinalIgnoreCase))
+                {
+                    var serializer = new XmlSerializer(typeof(MatrixExportModel));
+                    model = (MatrixExportModel)serializer.Deserialize(stream);
+                }
+                else
+                {
+                    return (null, "Formato de ficheiro não suportado.");
+                }
+
+                if (model == null || model.Data == null || model.Rows != 2 || model.Columns != 2)
+                    return (null, "A matriz inversa deve ser obrigatoriamente 2 × 2.");
+
+                var mat = new int[2, 2];
+
+                for (int i = 0; i < 2; i++)
+                    for (int j = 0; j < 2; j++)
+                        mat[i, j] = (int)model.Data[i][j];
+
+                int det = mat[0, 0] * mat[1, 1] - mat[0, 1] * mat[1, 0];
+                if (det != 1 && det != -1)
+                    return (null, "A matriz inversa importada não tem determinante ±1.");
+
+                return (mat, null);
+            }
+            catch
+            {
+                return (null, "Erro ao ler a matriz inversa.");
+            }
+        }
+
+        private static int[,] InvertMatrix2x2(int[,] A)
+        {
+            int det = A[0, 0] * A[1, 1] - A[0, 1] * A[1, 0];
+
+            if (det != 1 && det != -1)
+                throw new InvalidOperationException("Determinante inválido para inversão.");
+
+            return new int[,]
+            {
+        {  A[1, 1] / det, -A[0, 1] / det },
+        { -A[1, 0] / det,  A[0, 0] / det }
+            };
+        }
+
 
     }
 }

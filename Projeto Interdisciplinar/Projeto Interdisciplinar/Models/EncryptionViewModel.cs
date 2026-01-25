@@ -8,10 +8,10 @@ namespace YourApp.Models
         public string InputText { get; set; }
 
         // matrix A inputs (usar mesmo campos já existentes)
-        public int A11 { get; set; } = 2;
-        public int A12 { get; set; } = 3;
-        public int A21 { get; set; } = 1;
-        public int A22 { get; set; } = 2;
+        public int A11 { get; set; } = 0;
+        public int A12 { get; set; } = 0;
+        public int A21 { get; set; } = 0;
+        public int A22 { get; set; } = 0;
 
         // string com os números (opcional, mantido para compatibilidade)
         public string EncodedNumbers { get; set; }

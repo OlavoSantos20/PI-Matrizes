@@ -70,10 +70,11 @@
             <div class="col-auto d-flex justify-content-center mb-4 text-center">
 
             <!-- IMPORTAÇÃO -->
-                <input type="file" name="matrixFile" accept=".json,.xml,application/json,text/xml,application/xml" class="form-control form-control-sm file-input-sm d-inline-block me-2" style="width:auto" />
+                <input type="file" name="matrixFile" accept=".json,.xml,application/json,text/xml,application/xml" class="form-control form-control-sm file-input-sm d-inline-block me-2" style="width:auto" /><br>
                 <button type="submit" name="actionType" value="import" class="btn btn-outline-secondary me-1">
-                Importar Matriz
+                Importar Matriz Codificada
                 </button>
+
             </div>
 
             <!-- MATRIZ IMPORTADA -->
@@ -107,7 +108,14 @@
 
             <!-- MATRIZ INVERSA -->
             <div class="matriz-wrapper mt-3">
-                <label class="form-label">Matriz Inversa (2×2)</label>
+                <label class="form-label"><strong>Matriz Decodificadora (2×2)</strong></label>
+                <label class="form-label">Importe a Matriz Inversa que exportou na codificação</label>
+                <div class="col-auto d-flex justify-content-center mb-4 text-center">
+                    <input type="file" name="inverseFile" accept=".json,.xml" class="form-control form-control-sm file-input-sm d-inline-block me-2" style="width:auto" />
+                    <button type="submit" name="actionType" value="importInverse" class="btn btn-outline-secondary me-1">
+                        Importar Matriz Inversa
+                    </button>
+                </div>
                 <div class="matriz-2x2">
                     <input class="form-control" name="A11" value="@Model.A11" />
                     <input class="form-control" name="A12" value="@Model.A12" />

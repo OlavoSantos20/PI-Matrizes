@@ -2,5 +2,108 @@
     ViewData["Title"] = "Home";
 }
 
+<style>
+    .page {
+        padding: 40px;
+        max-width: 1200px;
+        margin: 0 auto;
+        text-align: center;
+    }
 
+    .hero {
+        background: #4e4d4a;
+        border-radius: 16px;
+        padding: 40px;
+        color: #e5e7eb;
+        box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+        margin-bottom: 30px;
+    }
 
+        .hero h1 {
+            font-size: 2.2rem;
+            margin-bottom: 15px;
+        }
+
+        .hero p {
+            line-height: 1.7;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+    .cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 25px;
+        justify-items: center;
+    }
+
+    .card {
+        background: #4e4d4a;
+        border-radius: 14px;
+        padding: 25px;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.35);
+        width: 100%;
+        max-width: 350px;
+    }
+
+        .card h3 {
+            font-size: 1.2rem;
+            margin-bottom: 12px;
+            color: #e5e7eb;
+        }
+
+        .card ul {
+            list-style: none;
+            padding: 0;
+            color: #e5e7eb;
+            line-height: 1.8;
+            font-size: 0.95rem;
+        }
+
+</style>
+
+<div class="page">
+
+    <section class="hero">
+        <h1>Calculadora de Matrizes</h1>
+        <p>
+            Este projeto interdisciplinar tem como objetivo a criação de uma calculadora de matrizes interativa.
+            A aplicação permite criar, importar e exportar matrizes, realizar operações matemáticas
+            e utilizar funcionalidades de criptografia.
+        </p>
+    </section>
+
+    <section class="cards">
+
+        <div class="card">
+            <h3>Operações com Matrizes</h3>
+            <ul>
+                <li>Adição e subtração</li>
+                <li>Multiplicação de matrizes</li>
+                <li>Determinante</li>
+                <li>Matriz transposta e inversa</li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <h3>Criptografia</h3>
+            <ul>
+                <li>Criptografar mensagens</li>
+                <li>Descriptografar mensagens</li>
+                <li>Interface simples e intuitiva</li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <h3>Objetivos do Projeto</h3>
+            <ul>
+                <li>Aplicar conhecimentos adquiridos</li>
+                <li>Trabalho em equipa</li>
+                <li>Melhorar competências de programação</li>
+                <li>Resolução de problemas</li>
+            </ul>
+        </div>
+
+    </section>
+
+</div>

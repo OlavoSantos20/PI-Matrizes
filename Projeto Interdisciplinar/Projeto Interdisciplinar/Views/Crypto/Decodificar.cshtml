@@ -1,0 +1,138 @@
+﻿@model YourApp.Models.EncryptionViewModel
+@{
+    var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
+}
+
+<style>
+    .card-body {
+        background-color: #f8f9fa;
+        text-align: center;
+    }
+
+    .matriz-navbar .nav-link {
+        color: black;
+        font-weight: 500;
+    }
+
+        .matriz-navbar .nav-link.active {
+            color: #0d6efd;
+            background-color: #f8f9fa;
+        }
+
+    .matriz-wrapper {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .matriz-2x2 {
+        display: grid;
+        grid-template-columns: repeat(2, 70px);
+        grid-template-rows: repeat(2, 40px);
+        gap: 6px;
+        margin-bottom: 1rem;
+    }
+
+        .matriz-2x2 input {
+            text-align: center;
+            font-weight: 600;
+        }
+
+    .file-input-sm {
+        height: 40px;
+        padding: 0.25rem 0.5rem;
+        font-size: 0.875rem;
+        line-height: 2.2;
+    }
+
+</style>
+
+<div>
+    <!-- NAV -->
+    <ul class="nav nav-tabs nav-fill matriz-navbar">
+        <li class="nav-item">
+            <a class="nav-link @(currentAction == "Codificar" ? "active" : "")"
+               asp-controller="Crypto"
+               asp-action="Codificar">Codificar</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link @(currentAction == "Decodificar" ? "active" : "")"
+               asp-controller="Crypto"
+               asp-action="Decodificar">Decodificar</a>
+        </li>
+    </ul>
+
+    <div class="card-body">
+        <h2>Decodificar Mensagem</h2>
+
+        <form method="post" enctype="multipart/form-data">
+
+            <div class="col-auto d-flex justify-content-center mb-4 text-center">
+
+            <!-- IMPORTAÇÃO -->
+                <input type="file" name="matrixFile" accept=".json,.xml,application/json,text/xml,application/xml" class="form-control form-control-sm file-input-sm d-inline-block me-2" style="width:auto" />
+                <button type="submit" name="actionType" value="import" class="btn btn-outline-secondary me-1">
+                Importar Matriz
+                </button>
+            </div>
+
+            <!-- MATRIZ IMPORTADA -->
+            @if (Model.EncodedMatrix != null && Model.EncodedCols > 0)
+            {
+                <h5>Matriz Codificada (2 × @Model.EncodedCols)</h5>
+
+                <table class="table table-bordered text-center mx-auto" style="width:auto;">
+                    <tbody>
+                        <tr>
+                            @for (int c = 0; c < Model.EncodedCols; c++)
+                            {
+                                <td>
+                                    @Model.EncodedMatrix[0, c]
+                                    <input type="hidden" name="N[0,@c]" value="@Model.EncodedMatrix[0, c]" />
+                                </td>
+                            }
+                        </tr>
+                        <tr>
+                            @for (int c = 0; c < Model.EncodedCols; c++)
+                            {
+                                <td>
+                                    @Model.EncodedMatrix[1, c]
+                                    <input type="hidden" name="N[1,@c]" value="@Model.EncodedMatrix[1, c]" />
+                                </td>
+                            }
+                        </tr>
+                    </tbody>
+                </table>
+            }
+
+            <!-- MATRIZ INVERSA -->
+            <div class="matriz-wrapper mt-3">
+                <label class="form-label">Matriz Inversa (2×2)</label>
+                <div class="matriz-2x2">
+                    <input class="form-control" name="A11" value="@Model.A11" />
+                    <input class="form-control" name="A12" value="@Model.A12" />
+                    <input class="form-control" name="A21" value="@Model.A21" />
+                    <input class="form-control" name="A22" value="@Model.A22" />
+                </div>
+            </div>
+
+            <button type="submit" name="actionType" value="decode" class="btn btn-success">
+                Decodificar
+            </button>
+
+            <!-- RESULTADO -->
+            @if (!string.IsNullOrEmpty(Model.DecodedText))
+            {
+                <div class="mt-3">
+                    <label class="form-label">Mensagem Decodificada</label>
+                    <input class="form-control text-center" readonly value="@Model.DecodedText" />
+                </div>
+            }
+
+            @if (!string.IsNullOrEmpty(Model.Message))
+            {
+                <p class="text-danger mt-2">@Model.Message</p>
+            }
+        </form>
+    </div>
+</div>

@@ -1,0 +1,127 @@
+﻿@model YourApp.Models.EncryptionViewModel
+@{
+    var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
+}
+<style>
+
+    .card-body {
+        background-color: #f8f9fa;
+        align-items: center;
+        text-align: center;
+    }
+
+    .matriz-navbar .nav-link {
+        color: black;
+        border: none;
+        border-radius: 0;
+        font-weight: 500;
+    }
+
+        .matriz-navbar .nav-link:hover {
+            color: #0d6efd;
+        }
+
+        .matriz-navbar .nav-link.active {
+            color: #0d6efd;
+            background-color: #f8f9fa;
+        }
+
+    .matriz-wrapper {
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+    }
+    .matriz-2x2 {
+        display: grid;
+        grid-template-columns: repeat(2, 70px);
+        grid-template-rows: repeat(2, 40px);
+        gap: 6px;
+        width: fit-content;
+    }
+
+        .matriz-2x2 input {
+            text-align: center;
+            font-weight: 600;
+        }
+
+   
+</style>
+<div>
+    <div>
+        <ul class="nav nav-tabs nav-fill matriz-navbar">
+            <li class="nav-item">
+                <a class="nav-link @(currentAction == "Codificar" ? "active" : "")"
+                   asp-controller="Crypto"
+                   asp-action="Codificar">
+                    Codificar
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link @(currentAction == "Decodificar" ? "active" : "")"
+                   asp-controller="Crypto"
+                   asp-action="Decodificar">
+                    Decodificar
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="card-body">
+        <h2>Codificar Mensagem</h2>
+
+        <form method="post" class="mb-3">
+            <div class="mb-2">
+                <label class="form-label">Mensagem</label>
+                <input class="form-control" name="InputText" value="@Model.InputText" />
+            </div>
+
+            <div class="mb-2">
+                <label class="form-label">Matriz codificadora (2×2)</label>
+                <div class="matriz-wrapper">
+                    <div class="matriz-2x2">
+                        <input class="form-control" name="A11" value="@Model.A11" />
+
+                        <input class="form-control" name="A12" value="@Model.A12" />
+
+                        <input class="form-control" name="A21" value="@Model.A21" />
+ 
+                        <input class="form-control" name="A22" value="@Model.A22" />
+                    </div>
+                </div>
+            </div>
+
+            <button class="btn btn-primary">Codificar</button>
+        
+
+        @if (Model.EncodedMatrix != null && Model.EncodedCols > 0)
+        {
+            <h5>Resultado (matriz 2 × @Model.EncodedCols)</h5>
+
+            <div class="matrix-wrap mb-3">
+                <table class="table table-bordered text-center" style="display:inline-table;">
+                    <tbody>
+                        <tr>
+                            @for (int j = 0; j < Model.EncodedCols; j++)
+                            {
+                                <td>@Model.EncodedMatrix[0, j]</td>
+                            }
+                        </tr>
+                        <tr>
+                            @for (int j = 0; j < Model.EncodedCols; j++)
+                            {
+                                <td>@Model.EncodedMatrix[1, j]</td>
+                            }
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <button type="submit" name="export" value="Resultado" class="btn btn-outline-secondary me-2">Exportar Resultado (JSON)</button>
+            <button type="submit" name="exportXml" value="Resultado" class="btn btn-outline-secondary">Exportar Resultado (XML)</button>
+        }
+
+            @if (!string.IsNullOrEmpty(Model.Message))
+            {
+                <div class="mb-3 text-danger">@Model.Message</div>
+            }
+        </form>
+</div>

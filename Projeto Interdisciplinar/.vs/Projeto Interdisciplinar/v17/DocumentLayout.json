@@ -3,16 +3,24 @@
   "WorkspaceRootPath": "C:\\Users\\costa\\Desktop\\PI GIT\\PI-Matrizes\\Projeto Interdisciplinar\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{E494C3B8-DCA5-45F1-9B95-548EA60023A1}|Projeto Interdisciplinar\\Projeto Interdisciplinar.csproj|c:\\users\\costa\\desktop\\pi git\\pi-matrizes\\projeto interdisciplinar\\projeto interdisciplinar\\views\\matrizes\\transposta.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{E494C3B8-DCA5-45F1-9B95-548EA60023A1}|Projeto Interdisciplinar\\Projeto Interdisciplinar.csproj|solutionrelative:projeto interdisciplinar\\views\\matrizes\\transposta.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E494C3B8-DCA5-45F1-9B95-548EA60023A1}|Projeto Interdisciplinar\\Projeto Interdisciplinar.csproj|c:\\users\\costa\\desktop\\pi git\\pi-matrizes\\projeto interdisciplinar\\projeto interdisciplinar\\views\\matrizes\\inversa.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{E494C3B8-DCA5-45F1-9B95-548EA60023A1}|Projeto Interdisciplinar\\Projeto Interdisciplinar.csproj|solutionrelative:projeto interdisciplinar\\views\\matrizes\\inversa.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E494C3B8-DCA5-45F1-9B95-548EA60023A1}|Projeto Interdisciplinar\\Projeto Interdisciplinar.csproj|c:\\users\\costa\\desktop\\pi git\\pi-matrizes\\projeto interdisciplinar\\projeto interdisciplinar\\views\\matrizes\\determinante.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{E494C3B8-DCA5-45F1-9B95-548EA60023A1}|Projeto Interdisciplinar\\Projeto Interdisciplinar.csproj|solutionrelative:projeto interdisciplinar\\views\\matrizes\\determinante.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{E494C3B8-DCA5-45F1-9B95-548EA60023A1}|Projeto Interdisciplinar\\Projeto Interdisciplinar.csproj|c:\\users\\costa\\desktop\\pi git\\pi-matrizes\\projeto interdisciplinar\\projeto interdisciplinar\\views\\matrizes\\somasubtracao.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{E494C3B8-DCA5-45F1-9B95-548EA60023A1}|Projeto Interdisciplinar\\Projeto Interdisciplinar.csproj|solutionrelative:projeto interdisciplinar\\views\\matrizes\\somasubtracao.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{E494C3B8-DCA5-45F1-9B95-548EA60023A1}|Projeto Interdisciplinar\\Projeto Interdisciplinar.csproj|c:\\users\\costa\\desktop\\pi git\\pi-matrizes\\projeto interdisciplinar\\projeto interdisciplinar\\controllers\\matrizescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{E494C3B8-DCA5-45F1-9B95-548EA60023A1}|Projeto Interdisciplinar\\Projeto Interdisciplinar.csproj|solutionrelative:projeto interdisciplinar\\controllers\\matrizescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{E494C3B8-DCA5-45F1-9B95-548EA60023A1}|Projeto Interdisciplinar\\Projeto Interdisciplinar.csproj|c:\\users\\costa\\desktop\\pi git\\pi-matrizes\\projeto interdisciplinar\\projeto interdisciplinar\\models\\matrixexportmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{E494C3B8-DCA5-45F1-9B95-548EA60023A1}|Projeto Interdisciplinar\\Projeto Interdisciplinar.csproj|solutionrelative:projeto interdisciplinar\\models\\matrixexportmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -31,40 +39,66 @@
             {
               "$type": "Document",
               "DocumentIndex": 2,
-              "Title": "MatrixExportModel.cs",
-              "DocumentMoniker": "C:\\Users\\costa\\Desktop\\PI GIT\\PI-Matrizes\\Projeto Interdisciplinar\\Projeto Interdisciplinar\\Models\\MatrixExportModel.cs",
-              "RelativeDocumentMoniker": "Projeto Interdisciplinar\\Models\\MatrixExportModel.cs",
-              "ToolTip": "C:\\Users\\costa\\Desktop\\PI GIT\\PI-Matrizes\\Projeto Interdisciplinar\\Projeto Interdisciplinar\\Models\\MatrixExportModel.cs",
-              "RelativeToolTip": "Projeto Interdisciplinar\\Models\\MatrixExportModel.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAB0AAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-24T15:39:26.072Z",
+              "Title": "Determinante.cshtml",
+              "DocumentMoniker": "C:\\Users\\costa\\Desktop\\PI GIT\\PI-Matrizes\\Projeto Interdisciplinar\\Projeto Interdisciplinar\\Views\\Matrizes\\Determinante.cshtml",
+              "RelativeDocumentMoniker": "Projeto Interdisciplinar\\Views\\Matrizes\\Determinante.cshtml",
+              "ToolTip": "C:\\Users\\costa\\Desktop\\PI GIT\\PI-Matrizes\\Projeto Interdisciplinar\\Projeto Interdisciplinar\\Views\\Matrizes\\Determinante.cshtml*",
+              "RelativeToolTip": "Projeto Interdisciplinar\\Views\\Matrizes\\Determinante.cshtml*",
+              "ViewState": "AgIAAGYAAAAAAAAAAAAAAIoAAAAHAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-01-25T03:05:26.977Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 1,
-              "Title": "MatrizesController.cs",
-              "DocumentMoniker": "C:\\Users\\costa\\Desktop\\PI GIT\\PI-Matrizes\\Projeto Interdisciplinar\\Projeto Interdisciplinar\\Controllers\\MatrizesController.cs",
-              "RelativeDocumentMoniker": "Projeto Interdisciplinar\\Controllers\\MatrizesController.cs",
-              "ToolTip": "C:\\Users\\costa\\Desktop\\PI GIT\\PI-Matrizes\\Projeto Interdisciplinar\\Projeto Interdisciplinar\\Controllers\\MatrizesController.cs",
-              "RelativeToolTip": "Projeto Interdisciplinar\\Controllers\\MatrizesController.cs",
-              "ViewState": "AgIAAD4BAAAAAAAAAAAYwEsBAAANAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-24T15:18:07.744Z",
+              "Title": "Inversa.cshtml",
+              "DocumentMoniker": "C:\\Users\\costa\\Desktop\\PI GIT\\PI-Matrizes\\Projeto Interdisciplinar\\Projeto Interdisciplinar\\Views\\Matrizes\\Inversa.cshtml",
+              "RelativeDocumentMoniker": "Projeto Interdisciplinar\\Views\\Matrizes\\Inversa.cshtml",
+              "ToolTip": "C:\\Users\\costa\\Desktop\\PI GIT\\PI-Matrizes\\Projeto Interdisciplinar\\Projeto Interdisciplinar\\Views\\Matrizes\\Inversa.cshtml*",
+              "RelativeToolTip": "Projeto Interdisciplinar\\Views\\Matrizes\\Inversa.cshtml*",
+              "ViewState": "AgIAAG8AAAAAAAAAAAAAAJQAAAAHAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-01-25T03:05:26.107Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 0,
+              "Title": "Transposta.cshtml",
+              "DocumentMoniker": "C:\\Users\\costa\\Desktop\\PI GIT\\PI-Matrizes\\Projeto Interdisciplinar\\Projeto Interdisciplinar\\Views\\Matrizes\\Transposta.cshtml",
+              "RelativeDocumentMoniker": "Projeto Interdisciplinar\\Views\\Matrizes\\Transposta.cshtml",
+              "ToolTip": "C:\\Users\\costa\\Desktop\\PI GIT\\PI-Matrizes\\Projeto Interdisciplinar\\Projeto Interdisciplinar\\Views\\Matrizes\\Transposta.cshtml",
+              "RelativeToolTip": "Projeto Interdisciplinar\\Views\\Matrizes\\Transposta.cshtml",
+              "ViewState": "AgIAAG8AAAAAAAAAAAAAAJcAAAAHAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-01-25T03:05:21.102Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
               "Title": "SomaSubtracao.cshtml",
               "DocumentMoniker": "C:\\Users\\costa\\Desktop\\PI GIT\\PI-Matrizes\\Projeto Interdisciplinar\\Projeto Interdisciplinar\\Views\\Matrizes\\SomaSubtracao.cshtml",
               "RelativeDocumentMoniker": "Projeto Interdisciplinar\\Views\\Matrizes\\SomaSubtracao.cshtml",
               "ToolTip": "C:\\Users\\costa\\Desktop\\PI GIT\\PI-Matrizes\\Projeto Interdisciplinar\\Projeto Interdisciplinar\\Views\\Matrizes\\SomaSubtracao.cshtml",
               "RelativeToolTip": "Projeto Interdisciplinar\\Views\\Matrizes\\SomaSubtracao.cshtml",
-              "ViewState": "AgIAADwAAAAAAAAAAAAAAFMAAACBAAAAAAAAAA==",
+              "ViewState": "AgIAAJ8AAAAAAAAAAAAAALUAAAAFAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-01-24T15:18:02.189Z",
+              "WhenOpened": "2026-01-25T03:05:16.838Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "MatrizesController.cs",
+              "DocumentMoniker": "C:\\Users\\costa\\Desktop\\PI GIT\\PI-Matrizes\\Projeto Interdisciplinar\\Projeto Interdisciplinar\\Controllers\\MatrizesController.cs",
+              "RelativeDocumentMoniker": "Projeto Interdisciplinar\\Controllers\\MatrizesController.cs",
+              "ToolTip": "C:\\Users\\costa\\Desktop\\PI GIT\\PI-Matrizes\\Projeto Interdisciplinar\\Projeto Interdisciplinar\\Controllers\\MatrizesController.cs",
+              "RelativeToolTip": "Projeto Interdisciplinar\\Controllers\\MatrizesController.cs",
+              "ViewState": "AgIAAKEFAAAAAAAAAAAswLcEAABWAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-25T02:20:47.53Z",
               "EditorCaption": ""
             }
           ]

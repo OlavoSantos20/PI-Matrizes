@@ -34,19 +34,19 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link @(currentAction == "MultiplicacaoEscalar" ? "active" : "")"
-                   asp-controller="Matrizes"
-                   asp-action="MultiplicacaoEscalar">
-                    Multiplicação Escalar
-                </a>
-            </li>
-            <li class="nav-item">
                 <a class="nav-link @(currentAction == "MultiplicacaoMatriz" ? "active" : "")"
                    asp-controller="Matrizes"
                    asp-action="MultiplicacaoMatriz">
                     Multiplicação de Matrizes
                 </a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link @(currentAction == "MultiplicacaoEscalar" ? "active" : "")"
+                   asp-controller="Matrizes"
+                   asp-action="MultiplicacaoEscalar">
+                    Multiplicação Escalar
+                </a>
+            </li>           
             <li class="nav-item">
                 <a class="nav-link @(currentAction == "Determinante" ? "active" : "")"
                    asp-controller="Matrizes"

@@ -70,8 +70,8 @@
         </div>
     </div>
     <div class="col-auto d-flex justify-content-center mb-4 text-center">
-        <input type="file" name="importFile" accept=".json,application/json" class="form-control form-control-sm file-input-sm d-inline-block me-2" style="width:auto" />
-        <button type="submit" name="import" value="MatrizA" class="btn btn-outline-secondary me-1">Importar Matriz (JSON)</button>
+        <input type="file" name="importFile" accept=".json,.xml,application/json,text/xml,application/xml" class="form-control form-control-sm file-input-sm d-inline-block me-2" style="width:auto" />
+        <button type="submit" name="import" value="MatrizA" class="btn btn-outline-secondary me-1">Importar Matriz (JSON ou XML)</button>
     </div>
 
     @if (Model.Linhas > 0 && Model.Colunas > 0)
@@ -82,6 +82,7 @@
                 <button type="submit" name="export" value="MatrizA" class="btn btn-outline-secondary btn-sm me-2">
                     Exportar (JSON)
                 </button>
+                <button type="submit" name="exportXml" value="MatrizA" class="btn btn-outline-secondary btn-sm ms-2">Exportar (XML)</button>
                 <div class="matrix-wrap">
                     <table class="table table-bordered text-center mx-auto matrix-table">
                         <tbody>
@@ -116,7 +117,7 @@
         </div>
     }
 
-</form>
+
 
 @if (Model.Inversa != null && Model.Operacao != null &&
    Model.Operacao.Equals("inversa", System.StringComparison.OrdinalIgnoreCase))
@@ -124,7 +125,11 @@
     <hr />
 
     <h5 class="text-center">Inversa</h5>
-
+    <input type="hidden" name="operacao" value="@(Model.Operacao)" />
+    <button type="submit" name="export" value="Resultado" class="btn btn-outline-secondary btn-sm ms-2">
+        Exportar Resultado (JSON)
+    </button>
+    <button type="submit" name="exportXml" value="Resultado" class="btn btn-outline-secondary btn-sm ms-2">Exportar Resultado (XML)</button>
     <div class="d-flex justify-content-center">
         <table class="table table-bordered text-center mx-auto result-table">
             <tbody>
@@ -141,7 +146,7 @@
         </table>
     </div>
 }
-
+</form>
 <script>
     function preencherAleatorio() {
         const min = -9;

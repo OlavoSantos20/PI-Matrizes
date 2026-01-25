@@ -32,10 +32,8 @@ public class MatrizesController : Controller
         ModelState.Remove(nameof(model.Operacao));
 
         // --- Reconstruir matrizes do Request.Form se o utilizador submeteu a grelha ---
-        // Isso preserva valores já preenchidos na página quando o utilizador clica noutro botão (ex: importar)
         if (Request.Form.Keys.Any(k => k.StartsWith("MatrizA[", StringComparison.OrdinalIgnoreCase)))
         {
-            // Inferir linhas/colunas se necessário (usar model se já tiver)
             int rowsA = model.Linhas > 0 ? model.Linhas : InferRowsFromFormKeys("MatrizA");
             int colsA = model.Colunas > 0 ? model.Colunas : InferColsFromFormKeys("MatrizA");
             if (rowsA > 0 && colsA > 0)
@@ -75,7 +73,7 @@ public class MatrizesController : Controller
 
                 // Detectar XML pelo nome do ficheiro ou pelo conteúdo inicial
                 bool likelyXml = importFile.FileName.EndsWith(".xml", StringComparison.OrdinalIgnoreCase)
-                                 || (bytes.Length > 0 && (bytes[0] == (byte)'<' || bytes[0] == (byte)0xEF)); // 0xEF para BOM UTF-8
+                                 || (bytes.Length > 0 && (bytes[0] == (byte)'<' || bytes[0] == (byte)0xEF));
 
                 MatrixExportModel exportModel = null;
 
@@ -89,7 +87,6 @@ public class MatrizesController : Controller
                 }
                 else
                 {
-                    // JSON tradicional
                     var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
                     exportModel = JsonSerializer.Deserialize<MatrixExportModel>(bytes, options);
                     if (exportModel == null || exportModel.Data == null)
@@ -211,7 +208,6 @@ public class MatrizesController : Controller
             // função small para obter rows/cols e validar/inferir como antes
             int InferRowsColsFromFormOrModel(string prefix, ref int rows, ref int cols)
             {
-                // tentamos usar model.Linhas/model.Colunas (no seu código há um único pares Linhas/Colunas para ambas)
                 if (rows <= 0 || cols <= 0)
                 {
                     int maxR = -1, maxC = -1;
@@ -281,7 +277,54 @@ public class MatrizesController : Controller
                     return ExportModelAsXml(exportModel, "MatrizB.xml");
                 else
                     return ExportModelAsJson(exportModel);
-            }          
+            }
+
+            // >>> NOVO: export do RESULTADO (JSON ou XML)
+            if (string.Equals(which, "Resultado", StringComparison.OrdinalIgnoreCase))
+            {
+                // Inferir dimensões a partir do modelo ou das keys da form (MatrizA/MatrizB)
+                int rows = model.Linhas;
+                int cols = model.Colunas;
+                if (rows <= 0 || cols <= 0)
+                {
+                    // preferir MatrizA, senão MatrizB
+                    InferRowsColsFromFormOrModel("MatrizA", ref rows, ref cols);
+                    if (rows <= 0 || cols <= 0)
+                        InferRowsColsFromFormOrModel("MatrizB", ref rows, ref cols);
+
+                    if (rows <= 0 || cols <= 0)
+                    {
+                        ModelState.AddModelError("", "Não foi possível inferir o tamanho das matrizes para exportar o Resultado. Define Linhas/Colunas ou preenche as grelhas.");
+                        return View(model);
+                    }
+                }
+
+                // Ler A e B do form (fallback zeros)
+                var A = ParseIntMatrixFromForm("MatrizA", rows, cols);
+                var B = ParseIntMatrixFromForm("MatrizB", rows, cols);
+
+                // Calcular Resultado (soma ou subtração) — deduzimos a operação a partir do form/operacao
+                // Preferir operacao enviada no Request.Form (caso export venha sem operacao)
+                string op = operacao;
+                if (string.IsNullOrEmpty(op) && Request.Form.ContainsKey("operacao"))
+                    op = Request.Form["operacao"].ToString();
+
+                var R = new int[rows, cols];
+                bool isSoma = string.Equals(op, "soma", StringComparison.OrdinalIgnoreCase);
+                for (int i = 0; i < rows; i++)
+                {
+                    for (int j = 0; j < cols; j++)
+                    {
+                        R[i, j] = isSoma ? (A[i, j] + B[i, j]) : (A[i, j] - B[i, j]);
+                    }
+                }
+
+                var exportModel = BuildExportModelFromInt(R, "Resultado");
+                if (wantXml)
+                    return ExportModelAsXml(exportModel, "Resultado.xml");
+                else
+                    return ExportModelAsJson(exportModel);
+            }
         }
 
         // --- 3) Validação de dimensões ---
@@ -295,7 +338,6 @@ public class MatrizesController : Controller
                 return View(model);
             }
         }
-
 
         // Se o utilizador só clicou em "Criar Matrizes"
         if (string.IsNullOrEmpty(operacao))
@@ -347,7 +389,7 @@ public class MatrizesController : Controller
     }
 
 
-   
+
 
 
     [HttpGet]
@@ -404,7 +446,7 @@ public class MatrizesController : Controller
             }
         }
 
-        // --- 1) IMPORT server-side (Importar MatrizA ou MatrizB via ficheiro JSON) ---
+        // --- 1) IMPORT server-side (Importar MatrizA ou MatrizB via ficheiro JSON ou XML) ---
         if (!string.IsNullOrEmpty(import) && importFile != null)
         {
             if (importFile.Length == 0)
@@ -418,15 +460,33 @@ public class MatrizesController : Controller
                 using var ms = new MemoryStream();
                 importFile.CopyTo(ms);
                 var bytes = ms.ToArray();
-                var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-                var importModel = JsonSerializer.Deserialize<MatrixExportModel>(bytes, options);
 
-                if (importModel == null || importModel.Data == null)
+                // Detectar XML pelo nome do ficheiro ou pelo conteúdo inicial
+                bool likelyXml = importFile.FileName.EndsWith(".xml", StringComparison.OrdinalIgnoreCase)
+                                 || (bytes.Length > 0 && (bytes[0] == (byte)'<' || bytes[0] == (byte)0xEF));
+
+                MatrixExportModel importModel = null;
+
+                if (likelyXml)
                 {
-                    ModelState.AddModelError("", "Formato JSON inválido.");
-                    return View(model);
+                    if (!TryDeserializeExportModelFromXml(bytes, out importModel))
+                    {
+                        ModelState.AddModelError("", "Formato XML inválido ou mal formado.");
+                        return View(model);
+                    }
+                }
+                else
+                {
+                    var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                    importModel = JsonSerializer.Deserialize<MatrixExportModel>(bytes, options);
+                    if (importModel == null || importModel.Data == null)
+                    {
+                        ModelState.AddModelError("", "Formato JSON inválido.");
+                        return View(model);
+                    }
                 }
 
+                // Validar dimensão básica
                 int rows = importModel.Rows;
                 int cols = importModel.Columns;
                 if (rows < 1 || cols < 1 || rows > 30 || cols > 30)
@@ -435,6 +495,7 @@ public class MatrizesController : Controller
                     return View(model);
                 }
 
+                // validar shape
                 if (importModel.Data.Length != rows)
                 {
                     ModelState.AddModelError("", "O número de linhas do 'Data' não corresponde a 'Rows'.");
@@ -449,7 +510,10 @@ public class MatrizesController : Controller
                     }
                 }
 
-                // Importar Matriz A
+                // --- Regras específicas: quando importar A ou B ---
+                bool hasA = model.MatrizA != null && model.MatrizA.Length > 0;
+                bool hasB = model.MatrizB != null && model.MatrizB.Length > 0;
+
                 if (string.Equals(import, "MatrizA", StringComparison.OrdinalIgnoreCase))
                 {
                     model.LinhasA = rows;
@@ -464,23 +528,53 @@ public class MatrizesController : Controller
                         for (int j = 0; j < cols; j++)
                             ModelState.Remove($"MatrizA[{i},{j}]");
 
-                    // Se MatrizB não tiver dimensões definidas, definir com o mesmo tamanho e inicializar a zeros
-                    if (model.LinhasB <= 0 || model.ColunasB <= 0)
+                    // Se MatrizB não tiver dimensões definidas, adoptar as mesmas dimensões e inicializar zeros
+                    if (!hasB && (model.LinhasB <= 0 || model.ColunasB <= 0))
                     {
                         model.LinhasB = rows;
                         model.ColunasB = cols;
-                        model.MatrizB = new int[rows, cols]; // zeros por defeito
+                        model.MatrizB = new int[rows, cols];
                         for (int i = 0; i < rows; i++)
                             for (int j = 0; j < cols; j++)
-                                ModelState.Remove($"MatrizB[{i},{j}]"); // garantir que a grelha B aparece limpa
+                                ModelState.Remove($"MatrizB[{i},{j}]");
                     }
 
                     return View(model);
                 }
 
-                // Importar Matriz B
                 if (string.Equals(import, "MatrizB", StringComparison.OrdinalIgnoreCase))
                 {
+                    // Se já existir MatrizA — obrigamos match de dimensões
+                    if (hasA)
+                    {
+                        int aRows = model.MatrizA.GetLength(0);
+                        int aCols = model.MatrizA.GetLength(1);
+                        if (aRows != rows || aCols != cols)
+                        {
+                            ModelState.AddModelError("", "A Matriz B tem dimensões diferentes da Matriz A — importação cancelada.");
+                            return View(model);
+                        }
+                    }
+                    else if (model.LinhasA > 0 || model.ColunasA > 0)
+                    {
+                        // Caso as dimensões A estejam definidas (mesmo sem matriz), verificar compatibilidade
+                        if (model.LinhasA != rows || model.ColunasA != cols)
+                        {
+                            ModelState.AddModelError("", "A Matriz B tem dimensões diferentes das dimensões de A definidas — importação cancelada.");
+                            return View(model);
+                        }
+                    }
+                    else
+                    {
+                        // Não existe A nem dimensões definidas — aceitar B e adoptar as dimensões do ficheiro, e criar A com zeros
+                        model.LinhasA = rows;
+                        model.ColunasA = cols;
+                        model.MatrizA = new int[rows, cols];
+                        for (int i = 0; i < rows; i++)
+                            for (int j = 0; j < cols; j++)
+                                ModelState.Remove($"MatrizA[{i},{j}]");
+                    }
+
                     model.LinhasB = rows;
                     model.ColunasB = cols;
                     model.MatrizB = new int[rows, cols];
@@ -491,17 +585,6 @@ public class MatrizesController : Controller
                     for (int i = 0; i < rows; i++)
                         for (int j = 0; j < cols; j++)
                             ModelState.Remove($"MatrizB[{i},{j}]");
-
-                    // Se MatrizA não tiver dimensões definidas, definir com o mesmo tamanho e inicializar a zeros
-                    if (model.LinhasA <= 0 || model.ColunasA <= 0)
-                    {
-                        model.LinhasA = rows;
-                        model.ColunasA = cols;
-                        model.MatrizA = new int[rows, cols]; // zeros por defeito
-                        for (int i = 0; i < rows; i++)
-                            for (int j = 0; j < cols; j++)
-                                ModelState.Remove($"MatrizA[{i},{j}]"); // garantir que a grelha A aparece limpa
-                    }
 
                     return View(model);
                 }
@@ -521,16 +604,22 @@ public class MatrizesController : Controller
             }
         }
 
-
-        // --- 2) EXPORT (se pedido) ---
-        if (Request.Form.ContainsKey("export"))
+        // --- 2) EXPORT (JSON existente) ou XML (novo) ---
+        if (Request.Form.ContainsKey("export") || Request.Form.ContainsKey("exportXml"))
         {
-            var which = Request.Form["export"].ToString();
+            var which = Request.Form.ContainsKey("export") ? Request.Form["export"].ToString() : Request.Form["exportXml"].ToString();
+            bool wantXml = Request.Form.ContainsKey("exportXml");
+
+            // tentar inferir dimensões de A/B a partir do model ou das keys
+            int InferRowsForA() => model.LinhasA > 0 ? model.LinhasA : InferRowsFromFormKeys("MatrizA");
+            int InferColsForA() => model.ColunasA > 0 ? model.ColunasA : InferColsFromFormKeys("MatrizA");
+            int InferRowsForB() => model.LinhasB > 0 ? model.LinhasB : InferRowsFromFormKeys("MatrizB");
+            int InferColsForB() => model.ColunasB > 0 ? model.ColunasB : InferColsFromFormKeys("MatrizB");
 
             if (string.Equals(which, "MatrizA", StringComparison.OrdinalIgnoreCase))
             {
-                int rows = model.LinhasA;
-                int cols = model.ColunasA;
+                int rows = InferRowsForA();
+                int cols = InferColsForA();
                 if (rows <= 0 || cols <= 0)
                 {
                     ModelState.AddModelError("", "Define as dimensões da Matriz A antes de exportar.");
@@ -539,13 +628,17 @@ public class MatrizesController : Controller
 
                 var matA = ParseIntMatrixFromForm("MatrizA", rows, cols);
                 var exportModel = BuildExportModelFromInt(matA, "MatrizA");
-                return ExportModelAsJson(exportModel);
+
+                if (wantXml)
+                    return ExportModelAsXml(exportModel, "MatrizA.xml");
+                else
+                    return ExportModelAsJson(exportModel);
             }
 
             if (string.Equals(which, "MatrizB", StringComparison.OrdinalIgnoreCase))
             {
-                int rows = model.LinhasB;
-                int cols = model.ColunasB;
+                int rows = InferRowsForB();
+                int cols = InferColsForB();
                 if (rows <= 0 || cols <= 0)
                 {
                     ModelState.AddModelError("", "Define as dimensões da Matriz B antes de exportar.");
@@ -554,19 +647,23 @@ public class MatrizesController : Controller
 
                 var matB = ParseIntMatrixFromForm("MatrizB", rows, cols);
                 var exportModel = BuildExportModelFromInt(matB, "MatrizB");
-                return ExportModelAsJson(exportModel);
+
+                if (wantXml)
+                    return ExportModelAsXml(exportModel, "MatrizB.xml");
+                else
+                    return ExportModelAsJson(exportModel);
             }
 
+            // --- dentro do bloco: if (Request.Form.ContainsKey("export") || Request.Form.ContainsKey("exportXml")) ---
             if (string.Equals(which, "Resultado", StringComparison.OrdinalIgnoreCase))
             {
-                // Precisamos das dimensões para calcular resultado
+                // necessita das dimensões para calcular resultado
                 if (model.LinhasA <= 0 || model.ColunasA <= 0 || model.LinhasB <= 0 || model.ColunasB <= 0)
                 {
                     ModelState.AddModelError("", "Define as dimensões de ambas as matrizes antes de exportar o Resultado.");
                     return View(model);
                 }
 
-                // Validar possibilidade de multiplicação
                 if (model.ColunasA != model.LinhasB)
                 {
                     ModelState.AddModelError("", "Para calcular o resultado é necessário que Nº Colunas(A) = Nº Linhas(B).");
@@ -575,7 +672,6 @@ public class MatrizesController : Controller
 
                 var A = ParseIntMatrixFromForm("MatrizA", model.LinhasA, model.ColunasA);
                 var B = ParseIntMatrixFromForm("MatrizB", model.LinhasB, model.ColunasB);
-
                 int rowsR = model.LinhasA;
                 int colsR = model.ColunasB;
                 var R = new int[rowsR, colsR];
@@ -587,14 +683,19 @@ public class MatrizesController : Controller
                         long sum = 0;
                         for (int k = 0; k < model.ColunasA; k++)
                             sum += (long)A[i, k] * B[k, j];
-
                         R[i, j] = (int)sum;
                     }
                 }
 
                 var exportModel = BuildExportModelFromInt(R, "Resultado");
-                return ExportModelAsJson(exportModel);
+
+                // devolver JSON ou XML conforme pedido
+                if (wantXml)
+                    return ExportModelAsXml(exportModel, "Resultado.xml");
+                else
+                    return ExportModelAsJson(exportModel);
             }
+
         }
 
         // --- 3) Validações antes de executar multiplicação ---
@@ -694,7 +795,6 @@ public class MatrizesController : Controller
     [HttpPost]
     public IActionResult MultiplicacaoEscalar(MatrizViewModel model, string? operacao, string? import, IFormFile? importFile)
     {
-
         if (model == null)
             model = new MatrizViewModel();
 
@@ -710,7 +810,6 @@ public class MatrizesController : Controller
         // --- 1) IMPORT server-side: se o botão "import" foi clicado e existe um ficheiro ---
         if (!string.IsNullOrEmpty(import) && importFile != null)
         {
-            // validar tamanho / tipo básico (opcional)
             if (importFile.Length == 0)
             {
                 ModelState.AddModelError("", "Ficheiro vazio.");
@@ -723,18 +822,34 @@ public class MatrizesController : Controller
                 importFile.CopyTo(ms);
                 var bytes = ms.ToArray();
 
-                var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-                var exportModel = JsonSerializer.Deserialize<MatrixExportModel>(bytes, options);
+                // Detectar XML pelo nome do ficheiro ou pelo conteúdo inicial
+                bool likelyXml = importFile.FileName.EndsWith(".xml", StringComparison.OrdinalIgnoreCase)
+                                 || (bytes.Length > 0 && (bytes[0] == (byte)'<' || bytes[0] == (byte)0xEF));
 
-                if (exportModel == null || exportModel.Data == null)
+                MatrixExportModel importModel = null;
+
+                if (likelyXml)
                 {
-                    ModelState.AddModelError("", "Formato JSON inválido.");
-                    return View(model);
+                    if (!TryDeserializeExportModelFromXml(bytes, out importModel))
+                    {
+                        ModelState.AddModelError("", "Formato XML inválido ou mal formado.");
+                        return View(model);
+                    }
+                }
+                else
+                {
+                    var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                    importModel = JsonSerializer.Deserialize<MatrixExportModel>(bytes, options);
+                    if (importModel == null || importModel.Data == null)
+                    {
+                        ModelState.AddModelError("", "Formato JSON inválido.");
+                        return View(model);
+                    }
                 }
 
-                int rows = exportModel.Rows;
-                int cols = exportModel.Columns;
-
+                // Validar dimensão básica
+                int rows = importModel.Rows;
+                int cols = importModel.Columns;
                 if (rows < 1 || cols < 1 || rows > 30 || cols > 30)
                 {
                     ModelState.AddModelError("", "Dimensões no ficheiro fora do permitido (1..30).");
@@ -742,32 +857,41 @@ public class MatrizesController : Controller
                 }
 
                 // validar shape
-                if (exportModel.Data.Length != rows)
+                if (importModel.Data.Length != rows)
                 {
                     ModelState.AddModelError("", "O número de linhas do 'Data' não corresponde a 'Rows'.");
                     return View(model);
                 }
                 for (int r = 0; r < rows; r++)
                 {
-                    if (exportModel.Data[r] == null || exportModel.Data[r].Length != cols)
+                    if (importModel.Data[r] == null || importModel.Data[r].Length != cols)
                     {
                         ModelState.AddModelError("", $"A linha {r} do 'Data' não tem {cols} colunas.");
                         return View(model);
                     }
                 }
 
+                // Adotar dimensões e popular MatrizA (Multiplicação escalar só usa MatrizA)
                 model.Linhas = rows;
                 model.Colunas = cols;
 
-                if (import == "MatrizA")
+                if (string.Equals(import, "MatrizA", StringComparison.OrdinalIgnoreCase))
                 {
                     model.MatrizA = new int[rows, cols];
                     for (int i = 0; i < rows; i++)
                         for (int j = 0; j < cols; j++)
-                            model.MatrizA[i, j] = Convert.ToInt32(Math.Round(exportModel.Data[i][j]));
+                            model.MatrizA[i, j] = Convert.ToInt32(Math.Round(importModel.Data[i][j]));
+
+                    // garantir que o form não reaparece com valores antigos do ModelState
+                    for (int i = 0; i < rows; i++)
+                        for (int j = 0; j < cols; j++)
+                            ModelState.Remove($"MatrizA[{i},{j}]");
+                }
+                else
+                {
+                    ModelState.AddModelError("", "Import inválido: valor de 'import' desconhecido para esta ação.");
                 }
 
-                // devolve view com grelha preenchida
                 return View(model);
             }
             catch (JsonException)
@@ -782,27 +906,75 @@ public class MatrizesController : Controller
             }
         }
 
+        // --- 1.b) Reconstruir MatrizA do Request.Form se o utilizador submeteu a grelha ---
+        if (Request.Form.Keys.Any(k => k.StartsWith("MatrizA[", StringComparison.OrdinalIgnoreCase)))
+        {
+            int rows = model.Linhas > 0 ? model.Linhas : InferRowsFromFormKeys("MatrizA");
+            int cols = model.Colunas > 0 ? model.Colunas : InferColsFromFormKeys("MatrizA");
+            if (rows > 0 && cols > 0)
+            {
+                model.MatrizA = ParseIntMatrixFromForm("MatrizA", rows, cols);
+                model.Linhas = rows;
+                model.Colunas = cols;
+            }
+        }
+
+        // --- 2) EXPORT (JSON existente) ou XML (novo) ---
+        if (Request.Form.ContainsKey("export") || Request.Form.ContainsKey("exportXml"))
+        {
+            var which = Request.Form.ContainsKey("export") ? Request.Form["export"].ToString() : Request.Form["exportXml"].ToString();
+            bool wantXml = Request.Form.ContainsKey("exportXml");
+
+            // Inferir dimensões se necessário
+            int rows = model.Linhas;
+            int cols = model.Colunas;
+            if (rows <= 0 || cols <= 0)
+            {
+                rows = InferRowsFromFormKeys("MatrizA");
+                cols = InferColsFromFormKeys("MatrizA");
+            }
+            if (rows <= 0 || cols <= 0)
+            {
+                ModelState.AddModelError("", "Define as dimensões da Matriz A antes de exportar.");
+                return View(model);
+            }
+
+            if (string.Equals(which, "MatrizA", StringComparison.OrdinalIgnoreCase))
+            {
+                var matA = ParseIntMatrixFromForm("MatrizA", rows, cols);
+                var exportModel = BuildExportModelFromInt(matA, "MatrizA");
+                if (wantXml) return ExportModelAsXml(exportModel, "MatrizA.xml");
+                else return ExportModelAsJson(exportModel);
+            }
+
+            if (string.Equals(which, "Resultado", StringComparison.OrdinalIgnoreCase))
+            {
+                // Ler MatrizA do form (evita dependência do model estar totalmente preenchido)
+                var matA = ParseIntMatrixFromForm("MatrizA", rows, cols);
+
+                // Escalar: preferir model.Escalar, caso contrário ler do form
+                int escalar = model.Escalar;
+                if (escalar == 0 && Request.Form.ContainsKey(nameof(model.Escalar)))
+                    int.TryParse(Request.Form[nameof(model.Escalar)], out escalar);
+
+                // Calcular Resultado (matriz A * escalar)
+                var R = new int[rows, cols];
+                for (int i = 0; i < rows; i++)
+                    for (int j = 0; j < cols; j++)
+                        R[i, j] = matA[i, j] * escalar;
+
+                var exportModel = BuildExportModelFromInt(R, "Resultado");
+                if (wantXml) return ExportModelAsXml(exportModel, "Resultado.xml");
+                else return ExportModelAsJson(exportModel);
+            }
+        }
+
+        // --- 3) Validações (após import/export) ---
         if (model.Linhas < 1 || model.Colunas < 1 ||
             model.Linhas > 30 || model.Colunas > 30)
         {
             ModelState.AddModelError("", "Dimensões inválidas (1 a 30).");
             return View(model);
-        }
-
-        // Detectar pedido de exportação (botão name="export")
-        if (Request.Form.ContainsKey("export"))
-        {
-            var which = Request.Form["export"].ToString(); 
-
-            // Exportar MatrizA
-            if (which == "MatrizA")
-            {
-                var matA = ParseIntMatrixFromForm("MatrizA", model.Linhas, model.Colunas);
-                var exportModel = BuildExportModelFromInt(matA, "MatrizA");
-                return ExportModelAsJson(exportModel);
-            }           
-
-           
         }
 
         // Se o utilizador só clicou em "Criar Matrizes"
@@ -817,36 +989,39 @@ public class MatrizesController : Controller
 
         model.Operacao = operacao;
 
-        model.MatrizA = new int[linhas, colunas];
+        model.MatrizA ??= new int[linhas, colunas];
         model.Resultado = new int[linhas, colunas];
 
-        // Ler Matriz A
+        // Ler Matriz A do form
         for (int i = 0; i < linhas; i++)
         {
             for (int j = 0; j < colunas; j++)
             {
                 string keyA = $"MatrizA[{i},{j}]";
-
-                if (Request.Form.ContainsKey(keyA) &&
-                    int.TryParse(Request.Form[keyA], out int valA))
+                if (Request.Form.ContainsKey(keyA) && int.TryParse(Request.Form[keyA], out int valA))
                     model.MatrizA[i, j] = valA;
+                else
+                    model.MatrizA[i, j] = 0;
             }
         }
 
-        // Escalar agora vem do Model
-        int escalar = model.Escalar;
+        // Escalar agora vem do Model (ou do form como fallback)
+        int escalarVal = model.Escalar;
+        if (escalarVal == 0 && Request.Form.ContainsKey(nameof(model.Escalar)))
+            int.TryParse(Request.Form[nameof(model.Escalar)], out escalarVal);
 
         // Multiplicação escalar
         for (int i = 0; i < linhas; i++)
         {
             for (int j = 0; j < colunas; j++)
             {
-                model.Resultado[i, j] = model.MatrizA[i, j] * escalar;
+                model.Resultado[i, j] = model.MatrizA[i, j] * escalarVal;
             }
         }
 
         return View(model);
     }
+
 
     [HttpGet]
     public IActionResult Determinante()
@@ -872,7 +1047,6 @@ public class MatrizesController : Controller
         // --- 1) IMPORT server-side: se o botão "import" foi clicado e existe um ficheiro ---
         if (!string.IsNullOrEmpty(import) && importFile != null)
         {
-            // validar tamanho / tipo básico (opcional)
             if (importFile.Length == 0)
             {
                 ModelState.AddModelError("", "Ficheiro vazio.");
@@ -885,13 +1059,29 @@ public class MatrizesController : Controller
                 importFile.CopyTo(ms);
                 var bytes = ms.ToArray();
 
-                var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-                var exportModel = JsonSerializer.Deserialize<MatrixExportModel>(bytes, options);
+                // Detectar XML pelo nome do ficheiro ou pelo conteúdo inicial
+                bool likelyXml = importFile.FileName.EndsWith(".xml", StringComparison.OrdinalIgnoreCase)
+                                 || (bytes.Length > 0 && (bytes[0] == (byte)'<' || bytes[0] == (byte)0xEF));
 
-                if (exportModel == null || exportModel.Data == null)
+                MatrixExportModel exportModel = null;
+
+                if (likelyXml)
                 {
-                    ModelState.AddModelError("", "Formato JSON inválido.");
-                    return View(model);
+                    if (!TryDeserializeExportModelFromXml(bytes, out exportModel))
+                    {
+                        ModelState.AddModelError("", "Formato XML inválido ou mal formado.");
+                        return View(model);
+                    }
+                }
+                else
+                {
+                    var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                    exportModel = JsonSerializer.Deserialize<MatrixExportModel>(bytes, options);
+                    if (exportModel == null || exportModel.Data == null)
+                    {
+                        ModelState.AddModelError("", "Formato JSON inválido.");
+                        return View(model);
+                    }
                 }
 
                 int rows = exportModel.Rows;
@@ -924,18 +1114,27 @@ public class MatrizesController : Controller
                     }
                 }
 
+                // Adotar dimensões e popular MatrizA
                 model.Linhas = rows;
                 model.Colunas = cols;
 
-                if (import == "MatrizA")
+                if (string.Equals(import, "MatrizA", StringComparison.OrdinalIgnoreCase))
                 {
                     model.MatrizA = new int[rows, cols];
                     for (int i = 0; i < rows; i++)
                         for (int j = 0; j < cols; j++)
                             model.MatrizA[i, j] = Convert.ToInt32(Math.Round(exportModel.Data[i][j]));
+
+                    // garantir que o form não reaparece com valores antigos do ModelState
+                    for (int i = 0; i < rows; i++)
+                        for (int j = 0; j < cols; j++)
+                            ModelState.Remove($"MatrizA[{i},{j}]");
+                }
+                else
+                {
+                    ModelState.AddModelError("", "Import inválido: valor de 'import' desconhecido para esta ação.");
                 }
 
-                // devolve view com grelha preenchida
                 return View(model);
             }
             catch (JsonException)
@@ -948,11 +1147,68 @@ public class MatrizesController : Controller
                 ModelState.AddModelError("", "Erro a processar o ficheiro: " + ex.Message);
                 return View(model);
             }
-        }
+        } // fim import
 
         // Se Colunas não foi submetido (a view usa apenas "Linhas"), assume quadrado
         if (model.Colunas == 0 && model.Linhas > 0)
             model.Colunas = model.Linhas;
+
+        // --- EXPORT (JSON existente) ou XML (novo) ---
+        if (Request.Form.ContainsKey("export") || Request.Form.ContainsKey("exportXml"))
+        {
+            var which = Request.Form.ContainsKey("export") ? Request.Form["export"].ToString() : Request.Form["exportXml"].ToString();
+            bool wantXml = Request.Form.ContainsKey("exportXml");
+
+            // Exportar MatrizA
+            if (string.Equals(which, "MatrizA", StringComparison.OrdinalIgnoreCase))
+            {
+                if (model.Linhas <= 0 || model.Colunas <= 0)
+                {
+                    ModelState.AddModelError("", "Define as dimensões da Matriz A antes de exportar.");
+                    return View(model);
+                }
+
+                var matA = ParseIntMatrixFromForm("MatrizA", model.Linhas, model.Colunas);
+                var exportModel = BuildExportModelFromInt(matA, "MatrizA");
+                if (wantXml) return ExportModelAsXml(exportModel, "MatrizA.xml");
+                else return ExportModelAsJson(exportModel);
+            }
+
+            // Exportar Resultado (determinante) — devolve 1x1 com o valor do determinante
+            if (string.Equals(which, "Resultado", StringComparison.OrdinalIgnoreCase))
+            {
+                if (model.Linhas <= 0 || model.Colunas <= 0)
+                {
+                    ModelState.AddModelError("", "Define as dimensões da Matriz antes de exportar o Resultado.");
+                    return View(model);
+                }
+                if (model.Linhas != model.Colunas)
+                {
+                    ModelState.AddModelError("", "A matriz tem de ser quadrada para calcular o determinante.");
+                    return View(model);
+                }
+
+                // Ler a matriz do form (fallback a zeros)
+                var matA = ParseIntMatrixFromForm("MatrizA", model.Linhas, model.Colunas);
+
+                // calcular determinante
+                var a = new double[model.Linhas, model.Colunas];
+                for (int i = 0; i < model.Linhas; i++)
+                    for (int j = 0; j < model.Colunas; j++)
+                        a[i, j] = matA[i, j];
+
+                double det = DeterminantGaussian(a, model.Linhas, out bool ok);
+                if (!ok) det = 0.0;
+
+                // Construir export como 1x1 matrix contendo o determinante
+                var detArray = new double[1, 1];
+                detArray[0, 0] = det;
+                var exportModel = BuildExportModelFromDouble(detArray, "Determinante");
+
+                if (wantXml) return ExportModelAsXml(exportModel, "Determinante.xml");
+                else return ExportModelAsJson(exportModel);
+            }
+        }
 
         // Validar dimensões
         if (model.Linhas < 1 || model.Colunas < 1 ||
@@ -962,7 +1218,6 @@ public class MatrizesController : Controller
             return View(model);
         }
 
-
         // Só faz sentido para matriz quadrada
         if (model.Linhas != model.Colunas)
         {
@@ -970,30 +1225,16 @@ public class MatrizesController : Controller
             return View(model);
         }
 
-        // Detectar pedido de exportação (botão name="export")
-        if (Request.Form.ContainsKey("export"))
-        {
-            var which = Request.Form["export"].ToString();
-
-            // Exportar MatrizA
-            if (which == "MatrizA")
-            {
-                var matA = ParseIntMatrixFromForm("MatrizA", model.Linhas, model.Colunas);
-                var exportModel = BuildExportModelFromInt(matA, "MatrizA");
-                return ExportModelAsJson(exportModel);
-            }                     
-        }
-
-
-        int n = model.Linhas;
-        model.Operacao = operacao;
-
-        bool hasMatrixInputs = Request.Form.Keys.Any(k => k.StartsWith("MatrizA["));
+        // Detectar se o utilizador submeteu inputs da grelha
+        bool hasInputs = Request.Form.Keys.Any(k => k.StartsWith("MatrizA["));
 
         if (!string.Equals(operacao, "determinante", StringComparison.OrdinalIgnoreCase))
         {
             return View(model);
         }
+
+        int n = model.Linhas;
+        model.Operacao = operacao;
 
         model.MatrizA = new int[n, n];
 
@@ -1002,32 +1243,26 @@ public class MatrizesController : Controller
             for (int j = 0; j < n; j++)
             {
                 string keyA = $"MatrizA[{i},{j}]";
-
-                if (Request.Form.ContainsKey(keyA) &&
-                    int.TryParse(Request.Form[keyA], out int valA))
-                {
+                if (Request.Form.ContainsKey(keyA) && int.TryParse(Request.Form[keyA], out int valA))
                     model.MatrizA[i, j] = valA;
-                }
                 else
-                {
                     model.MatrizA[i, j] = 0;
-                }
             }
         }
 
         // Converter para double[,] para cálculo
-        double[,] a = new double[n, n];
+        double[,] am = new double[n, n];
         for (int i = 0; i < n; i++)
             for (int j = 0; j < n; j++)
-                a[i, j] = model.MatrizA[i, j];
+                am[i, j] = model.MatrizA[i, j];
 
         // Calcular determinante
-        double det = DeterminantGaussian(a, n, out bool ok);
-
-        model.Determinante = ok ? det : 0.0;
+        double detVal = DeterminantGaussian(am, n, out bool okDet);
+        model.Determinante = okDet ? detVal : 0.0;
 
         return View(model);
     }
+
 
     // Método auxiliar privado para o cálculo do determinante
     private double DeterminantGaussian(double[,] mat, int n, out bool ok)
@@ -1115,7 +1350,7 @@ public class MatrizesController : Controller
         ModelState.Remove(nameof(model.Escalar));
 
         // ------------------------
-        // 1) IMPORT (se pedido)
+        // 1) IMPORT (JSON ou XML) se pedido
         // ------------------------
         if (!string.IsNullOrEmpty(import) && importFile != null)
         {
@@ -1131,17 +1366,33 @@ public class MatrizesController : Controller
                 importFile.CopyTo(ms);
                 var bytes = ms.ToArray();
 
-                var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-                var exportModel = JsonSerializer.Deserialize<MatrixExportModel>(bytes, options);
+                // Detectar XML pelo nome do ficheiro ou pelo conteúdo inicial
+                bool likelyXml = importFile.FileName.EndsWith(".xml", StringComparison.OrdinalIgnoreCase)
+                                 || (bytes.Length > 0 && (bytes[0] == (byte)'<' || bytes[0] == (byte)0xEF));
 
-                if (exportModel == null || exportModel.Data == null)
+                MatrixExportModel importModel = null;
+
+                if (likelyXml)
                 {
-                    ModelState.AddModelError("", "Formato JSON inválido.");
-                    return View(model);
+                    if (!TryDeserializeExportModelFromXml(bytes, out importModel))
+                    {
+                        ModelState.AddModelError("", "Formato XML inválido ou mal formado.");
+                        return View(model);
+                    }
+                }
+                else
+                {
+                    var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                    importModel = JsonSerializer.Deserialize<MatrixExportModel>(bytes, options);
+                    if (importModel == null || importModel.Data == null)
+                    {
+                        ModelState.AddModelError("", "Formato JSON inválido.");
+                        return View(model);
+                    }
                 }
 
-                int rows = exportModel.Rows;
-                int cols = exportModel.Columns;
+                int rows = importModel.Rows;
+                int cols = importModel.Columns;
 
                 if (rows < 1 || cols < 1 || rows > 30 || cols > 30)
                 {
@@ -1149,6 +1400,7 @@ public class MatrizesController : Controller
                     return View(model);
                 }
 
+                // inversa requer matriz quadrada
                 if (rows != cols)
                 {
                     ModelState.AddModelError("", "A matriz tem de ser quadrada para calcular a inversa.");
@@ -1156,20 +1408,21 @@ public class MatrizesController : Controller
                 }
 
                 // validar shape
-                if (exportModel.Data.Length != rows)
+                if (importModel.Data.Length != rows)
                 {
                     ModelState.AddModelError("", "O número de linhas do 'Data' não corresponde a 'Rows'.");
                     return View(model);
                 }
                 for (int r = 0; r < rows; r++)
                 {
-                    if (exportModel.Data[r] == null || exportModel.Data[r].Length != cols)
+                    if (importModel.Data[r] == null || importModel.Data[r].Length != cols)
                     {
                         ModelState.AddModelError("", $"A linha {r} do 'Data' não tem {cols} colunas.");
                         return View(model);
                     }
                 }
 
+                // adoptar dimensões e popular MatrizA
                 model.Linhas = rows;
                 model.Colunas = cols;
 
@@ -1178,7 +1431,16 @@ public class MatrizesController : Controller
                     model.MatrizA = new int[rows, cols];
                     for (int i = 0; i < rows; i++)
                         for (int j = 0; j < cols; j++)
-                            model.MatrizA[i, j] = Convert.ToInt32(Math.Round(exportModel.Data[i][j]));
+                            model.MatrizA[i, j] = Convert.ToInt32(Math.Round(importModel.Data[i][j]));
+
+                    // limpar entradas antigas do ModelState para inputs MatrizA
+                    for (int i = 0; i < rows; i++)
+                        for (int j = 0; j < cols; j++)
+                            ModelState.Remove($"MatrizA[{i},{j}]");
+                }
+                else
+                {
+                    ModelState.AddModelError("", "Botão de import desconhecido para esta ação.");
                 }
 
                 return View(model);
@@ -1193,27 +1455,125 @@ public class MatrizesController : Controller
                 ModelState.AddModelError("", "Erro a processar o ficheiro: " + ex.Message);
                 return View(model);
             }
-        }
-
-        // Detectar pedido de exportação (botão name="export")
-        if (Request.Form.ContainsKey("export"))
-        {
-            var which = Request.Form["export"].ToString();
-
-            // Exportar MatrizA
-            if (which == "MatrizA")
-            {
-                var matA = ParseIntMatrixFromForm("MatrizA", model.Linhas, model.Colunas);
-                var exportModel = BuildExportModelFromInt(matA, "MatrizA");
-                return ExportModelAsJson(exportModel);
-            }
-
-
-        }
-
+        } // fim import
 
         // ------------------------
-        // 3) Se chegou aqui: cálculo da inversa solicitado
+        // EXPORT (JSON ou XML)
+        // ------------------------
+        if (Request.Form.ContainsKey("export") || Request.Form.ContainsKey("exportXml"))
+        {
+            var which = Request.Form.ContainsKey("export") ? Request.Form["export"].ToString() : Request.Form["exportXml"].ToString();
+            bool wantXml = Request.Form.ContainsKey("exportXml");
+
+            // Exportar MatrizA
+            if (string.Equals(which, "MatrizA", StringComparison.OrdinalIgnoreCase))
+            {
+                // inferir dimensões se necessário
+                int rows = model.Linhas > 0 ? model.Linhas : InferRowsFromFormKeys("MatrizA");
+                int cols = model.Colunas > 0 ? model.Colunas : InferColsFromFormKeys("MatrizA");
+                if (rows <= 0 || cols <= 0)
+                {
+                    ModelState.AddModelError("", "Define as dimensões da Matriz A antes de exportar.");
+                    return View(model);
+                }
+
+                var matA = ParseIntMatrixFromForm("MatrizA", rows, cols);
+                var exportModel = BuildExportModelFromInt(matA, "MatrizA");
+                return wantXml ? ExportModelAsXml(exportModel, "MatrizA.xml") : ExportModelAsJson(exportModel);
+            }
+
+            // Exportar Resultado (Inversa) — devolve a matriz inversa (double) como matrix (rows x cols)
+            if (string.Equals(which, "Resultado", StringComparison.OrdinalIgnoreCase))
+            {
+                // inferir/validar dimensões
+                int rows = model.Linhas > 0 ? model.Linhas : InferRowsFromFormKeys("MatrizA");
+                int cols = model.Colunas > 0 ? model.Colunas : InferColsFromFormKeys("MatrizA");
+                if (rows <= 0 || cols <= 0)
+                {
+                    ModelState.AddModelError("", "Define as dimensões da Matriz antes de exportar o Resultado.");
+                    return View(model);
+                }
+                if (rows != cols)
+                {
+                    ModelState.AddModelError("", "A matriz tem de ser quadrada para calcular a inversa.");
+                    return View(model);
+                }
+
+                // Lê MatrizA do form (fallback zeros)
+                var matAInt = ParseIntMatrixFromForm("MatrizA", rows, cols);
+                var a = new double[rows, cols];
+                for (int i = 0; i < rows; i++)
+                    for (int j = 0; j < cols; j++)
+                        a[i, j] = matAInt[i, j];
+
+                // tentar calcular inversa (reusar o código existente)
+                // copiar de Determinante/Inversa para obter inv (sem alterar model)
+                double[,] aug = new double[rows, 2 * cols];
+                for (int i = 0; i < rows; i++)
+                {
+                    for (int j = 0; j < cols; j++)
+                        aug[i, j] = a[i, j];
+                    for (int j = 0; j < cols; j++)
+                        aug[i, cols + j] = (i == j) ? 1.0 : 0.0;
+                }
+
+                const double EPS = 1e-12;
+                for (int col = 0; col < cols; col++)
+                {
+                    int pivot = col;
+                    double maxAbs = Math.Abs(aug[col, col]);
+                    for (int r = col + 1; r < rows; r++)
+                    {
+                        double aVal = Math.Abs(aug[r, col]);
+                        if (aVal > maxAbs)
+                        {
+                            maxAbs = aVal;
+                            pivot = r;
+                        }
+                    }
+
+                    if (maxAbs < EPS)
+                    {
+                        ModelState.AddModelError("", "A matriz é singular (não tem inversa) — não é possível exportar Resultado.");
+                        return View(model);
+                    }
+
+                    if (pivot != col)
+                    {
+                        for (int c = 0; c < 2 * cols; c++)
+                        {
+                            double tmp = aug[col, c];
+                            aug[col, c] = aug[pivot, c];
+                            aug[pivot, c] = tmp;
+                        }
+                    }
+
+                    double pivotVal = aug[col, col];
+                    for (int c = 0; c < 2 * cols; c++)
+                        aug[col, c] /= pivotVal;
+
+                    for (int r = 0; r < rows; r++)
+                    {
+                        if (r == col) continue;
+                        double factor = aug[r, col];
+                        if (Math.Abs(factor) < EPS) continue;
+                        for (int c = 0; c < 2 * cols; c++)
+                            aug[r, c] -= factor * aug[col, c];
+                    }
+                }
+
+                var inv = new double[rows, cols];
+                for (int i = 0; i < rows; i++)
+                    for (int j = 0; j < cols; j++)
+                        inv[i, j] = Math.Round(aug[i, cols + j], 2, MidpointRounding.AwayFromZero);
+
+                var exportModel = BuildExportModelFromDouble(inv, "Inversa");
+                return wantXml ? ExportModelAsXml(exportModel, "Inversa.xml") : ExportModelAsJson(exportModel);
+            }
+        }
+
+        // ------------------------
+        // 3) Se chegou aqui: cálculo da inversa solicitado pela UI
         // ------------------------
         if (string.IsNullOrEmpty(operacao))
         {
@@ -1257,28 +1617,28 @@ public class MatrizesController : Controller
         }
 
         // Converter para double[,] e calcular inversa por eliminação Gaussiana
-        double[,] a = new double[n, n];
+        double[,] aMat = new double[n, n];
         for (int i = 0; i < n; i++)
             for (int j = 0; j < n; j++)
-                a[i, j] = model.MatrizA[i, j];
+                aMat[i, j] = model.MatrizA[i, j];
 
-        double[,] aug = new double[n, 2 * n];
+        double[,] augMat = new double[n, 2 * n];
         for (int i = 0; i < n; i++)
         {
             for (int j = 0; j < n; j++)
-                aug[i, j] = a[i, j];
+                augMat[i, j] = aMat[i, j];
             for (int j = 0; j < n; j++)
-                aug[i, n + j] = (i == j) ? 1.0 : 0.0;
+                augMat[i, n + j] = (i == j) ? 1.0 : 0.0;
         }
 
-        const double EPS = 1e-12;
+        const double EPS2 = 1e-12;
         for (int col = 0; col < n; col++)
         {
             int pivot = col;
-            double maxAbs = Math.Abs(aug[col, col]);
+            double maxAbs = Math.Abs(augMat[col, col]);
             for (int r = col + 1; r < n; r++)
             {
-                double aVal = Math.Abs(aug[r, col]);
+                double aVal = Math.Abs(augMat[r, col]);
                 if (aVal > maxAbs)
                 {
                     maxAbs = aVal;
@@ -1286,7 +1646,7 @@ public class MatrizesController : Controller
                 }
             }
 
-            if (maxAbs < EPS)
+            if (maxAbs < EPS2)
             {
                 model.Inversa = null;
                 ModelState.AddModelError("", "A matriz é singular (não tem inversa)");
@@ -1297,34 +1657,35 @@ public class MatrizesController : Controller
             {
                 for (int c = 0; c < 2 * n; c++)
                 {
-                    double tmp = aug[col, c];
-                    aug[col, c] = aug[pivot, c];
-                    aug[pivot, c] = tmp;
+                    double tmp = augMat[col, c];
+                    augMat[col, c] = augMat[pivot, c];
+                    augMat[pivot, c] = tmp;
                 }
             }
 
-            double pivotVal = aug[col, col];
+            double pivotVal = augMat[col, col];
             for (int c = 0; c < 2 * n; c++)
-                aug[col, c] /= pivotVal;
+                augMat[col, c] /= pivotVal;
 
             for (int r = 0; r < n; r++)
             {
                 if (r == col) continue;
-                double factor = aug[r, col];
-                if (Math.Abs(factor) < EPS) continue;
+                double factor = augMat[r, col];
+                if (Math.Abs(factor) < EPS2) continue;
                 for (int c = 0; c < 2 * n; c++)
-                    aug[r, c] -= factor * aug[col, c];
+                    augMat[r, c] -= factor * augMat[col, c];
             }
         }
 
-        double[,] inv = new double[n, n];
+        double[,] invMat = new double[n, n];
         for (int i = 0; i < n; i++)
             for (int j = 0; j < n; j++)
-                inv[i, j] = Math.Round(aug[i, n + j], 2, MidpointRounding.AwayFromZero);
+                invMat[i, j] = Math.Round(augMat[i, n + j], 2, MidpointRounding.AwayFromZero);
 
-        model.Inversa = inv;
+        model.Inversa = invMat;
         return View(model);
     }
+
 
 
     [HttpGet]
@@ -1339,7 +1700,7 @@ public class MatrizesController : Controller
         if (model == null)
             model = new MatrizViewModel();
 
-        // 1️⃣ limpar ModelState
+        // 1️⃣ limpar ModelState dos campos que tratamos manualmente
         ModelState.Remove(nameof(model.Linhas));
         ModelState.Remove(nameof(model.Colunas));
         ModelState.Remove(nameof(model.MatrizA));
@@ -1348,10 +1709,9 @@ public class MatrizesController : Controller
         ModelState.Remove(nameof(model.Operacao));
         ModelState.Remove(nameof(model.Escalar));
 
-        // --- 1) IMPORT server-side: se o botão "import" foi clicado e existe um ficheiro ---
+        // --- 1) IMPORT (JSON ou XML) ---
         if (!string.IsNullOrEmpty(import) && importFile != null)
         {
-            // validar tamanho / tipo básico (opcional)
             if (importFile.Length == 0)
             {
                 ModelState.AddModelError("", "Ficheiro vazio.");
@@ -1364,17 +1724,33 @@ public class MatrizesController : Controller
                 importFile.CopyTo(ms);
                 var bytes = ms.ToArray();
 
-                var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-                var exportModel = JsonSerializer.Deserialize<MatrixExportModel>(bytes, options);
+                // Detectar XML pelo nome do ficheiro ou pelo conteúdo inicial
+                bool likelyXml = importFile.FileName.EndsWith(".xml", StringComparison.OrdinalIgnoreCase)
+                                 || (bytes.Length > 0 && (bytes[0] == (byte)'<' || bytes[0] == (byte)0xEF));
 
-                if (exportModel == null || exportModel.Data == null)
+                MatrixExportModel importModel = null;
+
+                if (likelyXml)
                 {
-                    ModelState.AddModelError("", "Formato JSON inválido.");
-                    return View(model);
+                    if (!TryDeserializeExportModelFromXml(bytes, out importModel))
+                    {
+                        ModelState.AddModelError("", "Formato XML inválido ou mal formado.");
+                        return View(model);
+                    }
+                }
+                else
+                {
+                    var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                    importModel = JsonSerializer.Deserialize<MatrixExportModel>(bytes, options);
+                    if (importModel == null || importModel.Data == null)
+                    {
+                        ModelState.AddModelError("", "Formato JSON inválido.");
+                        return View(model);
+                    }
                 }
 
-                int rows = exportModel.Rows;
-                int cols = exportModel.Columns;
+                int rows = importModel.Rows;
+                int cols = importModel.Columns;
 
                 if (rows < 1 || cols < 1 || rows > 30 || cols > 30)
                 {
@@ -1383,32 +1759,40 @@ public class MatrizesController : Controller
                 }
 
                 // validar shape
-                if (exportModel.Data.Length != rows)
+                if (importModel.Data.Length != rows)
                 {
                     ModelState.AddModelError("", "O número de linhas do 'Data' não corresponde a 'Rows'.");
                     return View(model);
                 }
                 for (int r = 0; r < rows; r++)
                 {
-                    if (exportModel.Data[r] == null || exportModel.Data[r].Length != cols)
+                    if (importModel.Data[r] == null || importModel.Data[r].Length != cols)
                     {
                         ModelState.AddModelError("", $"A linha {r} do 'Data' não tem {cols} colunas.");
                         return View(model);
                     }
                 }
 
+                // Adotar dimensões e popular MatrizA
                 model.Linhas = rows;
                 model.Colunas = cols;
-
-                if (import == "MatrizA")
+                if (string.Equals(import, "MatrizA", StringComparison.OrdinalIgnoreCase))
                 {
                     model.MatrizA = new int[rows, cols];
                     for (int i = 0; i < rows; i++)
                         for (int j = 0; j < cols; j++)
-                            model.MatrizA[i, j] = Convert.ToInt32(Math.Round(exportModel.Data[i][j]));
+                            model.MatrizA[i, j] = Convert.ToInt32(Math.Round(importModel.Data[i][j]));
+
+                    // limpar entradas antigas do ModelState para inputs MatrizA
+                    for (int i = 0; i < rows; i++)
+                        for (int j = 0; j < cols; j++)
+                            ModelState.Remove($"MatrizA[{i},{j}]");
+                }
+                else
+                {
+                    ModelState.AddModelError("", "Import inválido: valor de 'import' desconhecido para esta ação.");
                 }
 
-                // devolve view com grelha preenchida
                 return View(model);
             }
             catch (JsonException)
@@ -1423,41 +1807,68 @@ public class MatrizesController : Controller
             }
         }
 
-        // Detectar pedido de exportação (botão name="export")
-        if (Request.Form.ContainsKey("export"))
+        // --- 2) EXPORT (JSON ou XML) ---
+        if (Request.Form.ContainsKey("export") || Request.Form.ContainsKey("exportXml"))
         {
-            var which = Request.Form["export"].ToString();
+            var which = Request.Form.ContainsKey("export") ? Request.Form["export"].ToString() : Request.Form["exportXml"].ToString();
+            bool wantXml = Request.Form.ContainsKey("exportXml");
 
-            // Exportar MatrizA
-            if (which == "MatrizA")
+            // helper para inferir rows/cols (preferir model, senão inferir das keys do form)
+            int rows = model.Linhas > 0 ? model.Linhas : InferRowsFromFormKeys("MatrizA");
+            int cols = model.Colunas > 0 ? model.Colunas : InferColsFromFormKeys("MatrizA");
+
+            if (string.Equals(which, "MatrizA", StringComparison.OrdinalIgnoreCase))
             {
-                var matA = ParseIntMatrixFromForm("MatrizA", model.Linhas, model.Colunas);
+                if (rows <= 0 || cols <= 0)
+                {
+                    ModelState.AddModelError("", "Define as dimensões da Matriz A antes de exportar.");
+                    return View(model);
+                }
+
+                var matA = ParseIntMatrixFromForm("MatrizA", rows, cols);
                 var exportModel = BuildExportModelFromInt(matA, "MatrizA");
-                return ExportModelAsJson(exportModel);
+                return wantXml ? ExportModelAsXml(exportModel, "MatrizA.xml") : ExportModelAsJson(exportModel);
             }
 
+            if (string.Equals(which, "Resultado", StringComparison.OrdinalIgnoreCase))
+            {
+                if (rows <= 0 || cols <= 0)
+                {
+                    ModelState.AddModelError("", "Define as dimensões da Matriz antes de exportar o Resultado.");
+                    return View(model);
+                }
 
+                // Ler MatrizA do form (fallback zeros)
+                var matA = ParseIntMatrixFromForm("MatrizA", rows, cols);
+
+                // Calcular transposta: resultado terá dimensão cols x rows
+                var R = new int[cols, rows];
+                for (int i = 0; i < rows; i++)
+                    for (int j = 0; j < cols; j++)
+                        R[j, i] = matA[i, j];
+
+                var exportModel = BuildExportModelFromInt(R, "Resultado");
+                return wantXml ? ExportModelAsXml(exportModel, "Resultado.xml") : ExportModelAsJson(exportModel);
+            }
         }
 
-        // Se Colunas não veio (por segurança)
+        // --- 3) Validações antes de executar transposta ---
+        // Se Colunas não veio (por segurança), assumir igual a linhas
         if (model.Colunas == 0 && model.Linhas > 0)
             model.Colunas = model.Linhas;
 
-
-        // Criar matriz apenas
-        if (string.IsNullOrEmpty(operacao))
-        {
-            return View(model);
-        }
-
-        // Validar dimensões
         if (model.Linhas < 1 || model.Colunas < 1 ||
             model.Linhas > 30 || model.Colunas > 30)
         {
             ModelState.AddModelError("", "Dimensões inválidas (1 a 30).");
             return View(model);
         }
-        
+
+        // Criar matriz apenas (quando o utilizador clica em "Criar Matrizes")
+        if (string.IsNullOrEmpty(operacao))
+        {
+            return View(model);
+        }
 
         if (!string.Equals(operacao, "transposta", StringComparison.OrdinalIgnoreCase))
         {
@@ -1469,16 +1880,15 @@ public class MatrizesController : Controller
         model.Operacao = operacao;
 
         model.MatrizA = new int[linhas, colunas];
-        model.Resultado = new int[colunas, linhas]; // dimensões invertidas
+        model.Resultado = new int[colunas, linhas]; 
 
-        // Ler Matriz A
+        // Ler Matriz A do form
         for (int i = 0; i < linhas; i++)
         {
             for (int j = 0; j < colunas; j++)
             {
                 string key = $"MatrizA[{i},{j}]";
-                if (Request.Form.ContainsKey(key) &&
-                    int.TryParse(Request.Form[key], out int val))
+                if (Request.Form.ContainsKey(key) && int.TryParse(Request.Form[key], out int val))
                     model.MatrizA[i, j] = val;
                 else
                     model.MatrizA[i, j] = 0;
@@ -1496,6 +1906,7 @@ public class MatrizesController : Controller
 
         return View(model);
     }
+
 
 
     // Tenta desserializar o XML para MatrixExportModel. Retorna true se OK.

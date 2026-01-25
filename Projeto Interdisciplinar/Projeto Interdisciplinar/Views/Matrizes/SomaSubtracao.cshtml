@@ -170,7 +170,7 @@
         </div>
     }
 
-</form>
+
 
 @if (Model.Resultado != null && Model.Operacao != null)
 {
@@ -179,6 +179,11 @@
     <h5 class="text-center">
         Resultado (@(Model.Operacao.Equals("soma", System.StringComparison.OrdinalIgnoreCase) ? "Soma" : "Subtração"))
     </h5>
+     <input type="hidden" name="operacao" value="@(Model.Operacao)" />
+    <button type="submit" name="export" value="Resultado" class="btn btn-outline-secondary btn-sm ms-2">
+        Exportar Resultado (JSON)
+    </button>
+    <button type="submit" name="exportXml" value="Resultado" class="btn btn-outline-secondary btn-sm ms-2">Exportar Resultado (XML)</button>
 
     <div class="d-flex justify-content-center">
         <table class="table table-bordered text-center mx-auto w-auto result-table">
@@ -193,10 +198,10 @@
                     </tr>
                 }
             </tbody>
-        </table>
+        </table>      
     </div>
 }
-
+</form>
 <script>
     function preencherAleatorio() {
         // intervalo dos valores aleatórios
